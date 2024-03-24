@@ -249,3 +249,54 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,java,linux,intellij,visualstudiocode,react
+
+#### Front
+
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+.idea
+# dependencies
+
+/frontend\node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+
+/frontend/coverage
+
+# next.js
+
+/frontend/.next
+/frontend/out/
+
+# production
+
+/frontend/build
+
+# misc
+
+\*.pem
+
+# debug
+
+/frontend/npm-debug.log*
+/frontend/yarn-debug.log*
+/frontend/yarn-error.log\*
+
+# local env files
+
+/frontend/.env\*.local
+
+# vercel
+
+/frontend/.vercel
+
+# typescript
+
+\*.tsbuildinfo
+/frontend/next-env.d.ts
+
+
+/frontend/package-lock.json
+/frontend/package.json
