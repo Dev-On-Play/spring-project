@@ -1,5 +1,5 @@
 "use client";
 
-export default function Mypage() {
+export default function MainPage() {
   return <>메인페이지</>;
 }
