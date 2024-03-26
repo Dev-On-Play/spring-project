@@ -11,7 +11,7 @@ export default function Home() {
     if (path === "/") {
       router.push("/mainPage");
     }
-  }, []);
+  }, [path,router]);
 
   return <></>;
 }

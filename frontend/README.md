@@ -4,10 +4,36 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 First, run the development server:
 
+로컬 실행 
 ```bash
 npm run local
 
 ```
+dev 실행
+```bash
+npm run dev
+
+```
+prod 실행
+```bash
+npm run prod
+
+```
+npm run 오류 발생시
+```bash
+npm install --legacy-peer-deps
+
+```
+
+### vacode 추천 extension
+1. Korean Language Pack for Visual Studio Code
+2. Local History
+3. Next JS/TS Snippets
+4. HTML CSS Support
+5. CSS Peek
+6. Auto Close Tag
+7. Auto Rename Tag
+
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
