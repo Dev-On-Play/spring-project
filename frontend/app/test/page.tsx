@@ -5,7 +5,7 @@ import CommonAccordion from "@/components/common/Accordion";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CommonAlert } from "@/components/common/Alert";
-import { useCountStore } from "@/hooks/store";
+import { useCountStore } from "@/store/store";
 
 import CommonButton from "@/components/common/Button";
 
