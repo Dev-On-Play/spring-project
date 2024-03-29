@@ -1,33 +1,36 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import CommonAccordion from "@/components/common/Accordion";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { CommonAlert } from "@/components/common/Alert";
-import { useCountStore } from "@/store/store";
-
-import CommonButton from "@/components/common/Button";
+import { useCountStore } from "@/store/store"
+import { useState } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import CommonAccordion from "@/components/common/Accordion"
+import { CommonAlert } from "@/components/common/Alert"
+import CommonAlertDialog from "@/components/common/AlertDialog"
+import CommonAvatar from "@/components/common/Avatar"
+import CommonBadge from "@/components/common/Badge"
+import CommonButton from "@/components/common/Button"
 
 export default function Component() {
-  const router = useRouter();
+  const router = useRouter()
   const goLogin = () => {
-    router.push("/login");
-  };
+    router.push("/login")
+  }
   const [accordionData, setAccordionData] = useState<{
-    title: string;
-    contents: string;
-    [key: string]: any;
+    title: string
+    contents: string
+    [key: string]: any
   }>({
     title: "아코디언 타이틀",
     contents: "아코디언 내부 컨텐츠 ",
-  });
+  })
   const alertMsg = {
     variant: "destructive",
     title: "알림 타이틀",
     contents: "알림 내용",
-  };
-  const { countState, plusCount, initCount } = useCountStore();
+  }
+  const { countState, plusCount, initCount } = useCountStore()
+  const badge: any[] = ["outline", "secondary", "destructive", "default"]
   return (
     <div>
       <CommonAccordion props={accordionData}></CommonAccordion>
@@ -50,6 +53,23 @@ export default function Component() {
         variant={"default"}
         onClick={initCount}
       ></CommonButton>
+      <br />
+      <CommonAlertDialog
+        callText={"호출 버튼 텍스트"}
+        dialogTitle={"타이틀"}
+        dialogText={"내부 텍스트"}
+        isCancell={true}
+        cancellText={"취소"}
+        confirmText={"확인"}
+      />
+      <br />
+      <CommonAvatar imgSrc={"https://github.com/shadcn.png"} />
+      <br />
+      {badge.map(
+        (item: "destructive" | "outline" | "secondary" | "default", idx) => {
+          return <CommonBadge variant={item} text={item} />
+        }
+      )}
     </div>
-  );
+  )
 }
