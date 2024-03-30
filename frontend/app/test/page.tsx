@@ -1,21 +1,20 @@
 "use client"
 
 import { useCountStore } from "@/store/store"
-import { useState } from "react"
-import Link from "next/link"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import CommonAccordion from "@/components/common/Accordion"
 import { CommonAlert } from "@/components/common/Alert"
 import CommonAlertDialog from "@/components/common/AlertDialog"
 import CommonAvatar from "@/components/common/Avatar"
 import CommonBadge from "@/components/common/Badge"
+import CommonBeadcrumb from "@/components/common/Beadcrumb"
 import CommonButton from "@/components/common/Button"
+import CommonCalendar from "@/components/common/Calendar"
 
 export default function Component() {
   const router = useRouter()
-  const goLogin = () => {
-    router.push("/login")
-  }
+
   const [accordionData, setAccordionData] = useState<{
     title: string
     contents: string
@@ -24,15 +23,25 @@ export default function Component() {
     title: "아코디언 타이틀",
     contents: "아코디언 내부 컨텐츠 ",
   })
-  const alertMsg = {
+  const alertMsg = useState<any>({
     variant: "destructive",
     title: "알림 타이틀",
     contents: "알림 내용",
-  }
+  })
   const { countState, plusCount, initCount } = useCountStore()
   const badge: any[] = ["outline", "secondary", "destructive", "default"]
+  const breadcrumb: { text: string; routerUrl?: string }[] = [
+    { text: "Home" },
+    { text: "Component" },
+    { text: "MyPage", routerUrl: "/test" },
+  ]
+
+  const [calendarValue, setCalendarValue] = useState<Date | undefined>(
+    new Date()
+  )
   return (
     <div>
+      <CommonBeadcrumb items={breadcrumb} />
       <CommonAccordion props={accordionData}></CommonAccordion>
       <div style={{ width: "400px" }}>
         <CommonAlert props={alertMsg} />
@@ -45,7 +54,7 @@ export default function Component() {
         className={""}
         variant={"default"}
         onClick={plusCount}
-      ></CommonButton>
+      />
       <br />
       <CommonButton
         text={"초기화"}
@@ -67,9 +76,18 @@ export default function Component() {
       <br />
       {badge.map(
         (item: "destructive" | "outline" | "secondary" | "default", idx) => {
-          return <CommonBadge variant={item} text={item} />
+          return (
+            <CommonBadge
+              key={idx}
+              variant={item}
+              text={item}
+              isLink={true}
+              linkUrl={"/"}
+            />
+          )
         }
       )}
+      <CommonCalendar date={calendarValue} changeDate={setCalendarValue} />
     </div>
   )
 }

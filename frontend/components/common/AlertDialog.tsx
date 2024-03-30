@@ -1,3 +1,4 @@
+"use client"
 import { NextPage } from "next"
 import {
   AlertDialog,
@@ -19,6 +20,11 @@ interface Props {
   isCancell: boolean
   cancellText: string
   confirmText: string
+  // alertOpen: boolean
+}
+
+const btnClick = (e: any) => {
+  console.log(e)
 }
 
 const CommonAlertDialog: NextPage<Props> = ({
@@ -28,8 +34,10 @@ const CommonAlertDialog: NextPage<Props> = ({
   isCancell,
   cancellText,
   confirmText,
+  // alertOpen = false,
 }) => {
   return (
+    //  open={alertOpen}
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button variant="outline">{callText}</Button>
@@ -45,7 +53,13 @@ const CommonAlertDialog: NextPage<Props> = ({
           ) : (
             <></>
           )}
-          <AlertDialogAction>{confirmText}</AlertDialogAction>
+          <AlertDialogAction
+            onClick={(e) => {
+              btnClick(e)
+            }}
+          >
+            {confirmText}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

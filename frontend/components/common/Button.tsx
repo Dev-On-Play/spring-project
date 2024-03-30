@@ -1,8 +1,11 @@
-import React from "react";
-import { Button } from "@/components/ui/button";
+"use client"
+
+import React from "react"
+import { Button } from "@/components/ui/button"
+
 export default function CommonButton(props: {
-  text: string;
-  className: string;
+  text: string
+  className: string
   variant:
     | "default"
     | "destructive"
@@ -11,8 +14,8 @@ export default function CommonButton(props: {
     | "ghost"
     | "link"
     | null
-    | undefined;
-  onClick: () => {};
+    | undefined
+  onClick?: () => {}
 }) {
   return (
     <Button
@@ -22,5 +25,5 @@ export default function CommonButton(props: {
     >
       {props.text}
     </Button>
-  );
+  )
 }

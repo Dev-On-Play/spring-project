@@ -9,6 +9,6 @@ const nextConfig = {
     tsconfigPath: "tsconfig.json",
   },
   distDir: ".next",
-};
+}
 
-export default nextConfig;
+export default nextConfig

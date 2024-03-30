@@ -1,3 +1,5 @@
+"use client"
+
 import { NextPage } from "next"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
