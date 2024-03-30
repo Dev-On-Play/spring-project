@@ -11,6 +11,7 @@ import CommonBadge from "@/components/common/Badge"
 import CommonBeadcrumb from "@/components/common/Beadcrumb"
 import CommonButton from "@/components/common/Button"
 import CommonCalendar from "@/components/common/Calendar"
+import CommonCheckbox from "@/components/common/Checkbox"
 
 export default function Component() {
   const router = useRouter()
@@ -39,6 +40,22 @@ export default function Component() {
   const [calendarValue, setCalendarValue] = useState<Date | undefined>(
     new Date()
   )
+  const [checkList, setCheckList] = useState<
+    {
+      isChecked: boolean
+      value: string
+      text: string
+    }[]
+  >([
+    { isChecked: false, value: "텍스트1", text: "텍스트1" },
+    { isChecked: false, value: "텍스트2", text: "텍스트2" },
+    { isChecked: false, value: "텍스트3", text: "텍스트3" },
+  ])
+  const chanageCheck = (ch: boolean, checkdIdx: number) => {
+    const tmp = [...checkList]
+    tmp[checkdIdx].isChecked = ch
+    setCheckList(tmp)
+  }
   return (
     <div>
       <CommonBeadcrumb items={breadcrumb} />
@@ -88,6 +105,19 @@ export default function Component() {
         }
       )}
       <CommonCalendar date={calendarValue} changeDate={setCalendarValue} />
+
+      {checkList.map((item, idx) => {
+        return (
+          <CommonCheckbox
+            key={idx}
+            index={idx}
+            isChecked={item.isChecked}
+            value={item.value}
+            text={item.text}
+            onCheckedChange={chanageCheck}
+          />
+        )
+      })}
     </div>
   )
 }
