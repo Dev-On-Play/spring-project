@@ -57,7 +57,7 @@ const fetchApi = async (
   }
 ) => {
   const headers = opts.headers
-    ? { "Content-Type": "application/json", ...opts.headers }
+    ? { ...opts.headers }
     : { "Content-Type": "application/json" }
   return instance(apiUrl, {
     method: opts.method,
