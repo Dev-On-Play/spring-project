@@ -1,5 +1,6 @@
 "use client"
 
+import fetchApi from "@/api/fetchApi"
 import { useCountStore } from "@/store/store"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -55,6 +56,23 @@ export default function Component() {
     const tmp = [...checkList]
     tmp[checkdIdx].isChecked = ch
     setCheckList(tmp)
+  }
+  const onReq = async () => {
+    console.log("클릭")
+    const res = await fetchApi("/tttttttt", {
+      method: "post",
+      data: {
+        text: "테스트",
+        text1: "테스트1",
+      },
+    })
+    // .then((res) => {
+    //   console.log(res)
+    // })
+    // .catch((err) => {
+    //   console.log(err.result)
+    // })
+    console.log(res.isOk)
   }
   return (
     <div>
@@ -118,6 +136,12 @@ export default function Component() {
           />
         )
       })}
+      <CommonButton
+        text={"api 테스트"}
+        className={""}
+        variant={"default"}
+        onClick={onReq}
+      />
     </div>
   )
 }

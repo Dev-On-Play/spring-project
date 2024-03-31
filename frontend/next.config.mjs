@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+const { NEXT_PUBLIC_BASE_URL, NEXT_PUBLIC_BACKEND_URL } = process.env
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
@@ -9,6 +10,14 @@ const nextConfig = {
     tsconfigPath: "tsconfig.json",
   },
   distDir: ".next",
+  async rewrites() {
+    return [
+      {
+        source: `${process.env.NEXT_PUBLIC_BASE_URL}/:path*`,
+        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BASE_URL}/:path*`,
+      },
+    ]
+  },
 }
 
 export default nextConfig
