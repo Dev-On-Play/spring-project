@@ -19,9 +19,6 @@ const CommonDialog: NextPage<Props> = ({
     dialogLabelText,
     className
 }) => {
-    const clickEvent = () => {
-
-    }
     return (
         <Dialog>
             <DialogTrigger asChild className={className}>
