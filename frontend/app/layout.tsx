@@ -23,7 +23,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Header />
-        {children}
+        <main className="container grid place-items-center px-4 md:mx-auto">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>

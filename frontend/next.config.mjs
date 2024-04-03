@@ -1,5 +1,4 @@
 /** @type {import('next').NextConfig} */
-const { NEXT_PUBLIC_BASE_URL, NEXT_PUBLIC_BACKEND_URL } = process.env
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
