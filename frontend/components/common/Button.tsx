@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button"
 export default function CommonButton(props: {
   text: string
   fontSize?: string
-  className: string
-  variant:
+  className?: string
+  variant?:
     | "default"
     | "destructive"
     | "outline"

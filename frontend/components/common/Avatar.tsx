@@ -7,14 +7,14 @@ interface Props {
   imgSrc: string
   alt?: string
   fallback?: string
-  className: string
+  className?: string
 }
 
 const CommonAvatar: NextPage<Props> = ({
   imgSrc,
   alt = "@shadcn",
   fallback = "CN",
-  className
+  className,
 }) => {
   return (
     <Avatar className={className}>
