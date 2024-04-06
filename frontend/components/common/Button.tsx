@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 
 export default function CommonButton(props: {
   text: string
+  fontSize?: string
   className: string
   variant:
     | "default"
@@ -23,7 +24,7 @@ export default function CommonButton(props: {
       variant={props.variant}
       onClick={props.onClick}
     >
-      {props.text}
+      <span className={props.fontSize}>{props.text}</span>
     </Button>
   )
 }

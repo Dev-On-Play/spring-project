@@ -29,7 +29,7 @@ export default function Header() {
               r="29"
               fill="white"
               stroke="#3E517A"
-              stroke-width="2"
+              strokeWidth="2"
             />
             <g opacity="0.6">
               <path
