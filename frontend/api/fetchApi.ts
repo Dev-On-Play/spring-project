@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios, { Method } from "axios"
 
 export const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
@@ -10,6 +10,7 @@ instance.interceptors.request.use(
   },
   (error) => {
     //요청 에러가 발생했을 때 수행할 로직
+    console.log(`[FetchApi] : request 오류 발생`)
     console.log(error)
     return Promise.reject(error)
   }
@@ -17,40 +18,21 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   (response) => {
     //응답에 대한 로직 작성
-    const res = response.data
-    return res
+    return response
   },
-
   (error) => {
     //응답 에러가 발생했을 때 수행할 로직
-    console.log(error) //디버깅
-    return Promise.reject(error)
+    console.log(
+      `[FetchApi] : ${error.code.includes("REQUEST") ? "request" : "response"} 오류 발생`
+    )
+    console.log(error.response.data)
+    return Promise.reject(error.response.data)
   }
 )
 const fetchApi = async (
   apiUrl: string,
   opts: {
-    method:
-      | "get"
-      | "GET"
-      | "delete"
-      | "DELETE"
-      | "head"
-      | "HEAD"
-      | "options"
-      | "OPTIONS"
-      | "post"
-      | "POST"
-      | "put"
-      | "PUT"
-      | "patch"
-      | "PATCH"
-      | "purge"
-      | "PURGE"
-      | "link"
-      | "LINK"
-      | "unlink"
-      | "UNLINK"
+    method: Method
     data?: { [key: string]: any }
     params?: any
     headers?: any
@@ -63,13 +45,15 @@ const fetchApi = async (
     method: opts.method,
     url: apiUrl,
     data: opts.data,
+    params: opts.params,
     headers: headers,
   })
     .then((res) => {
-      return { ...res, isOk: true }
+      return { ...res }
     })
     .catch((err) => {
-      return { ...err, isOk: false }
+      console.log(err)
+      return { ...err }
     })
 }
 export default fetchApi

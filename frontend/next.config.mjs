@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   swcMinify: true,
 
   //타입스크립트 적용
@@ -10,6 +10,7 @@ const nextConfig = {
   },
   distDir: ".next",
   async rewrites() {
+    //redirects  rewrites
     return [
       {
         source: `${process.env.NEXT_PUBLIC_BASE_URL}/:path*`,

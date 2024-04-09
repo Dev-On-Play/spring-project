@@ -1,6 +1,10 @@
 "use client"
 
+import fetchApi from "@/api/fetchApi"
+import { useEffect } from "react"
 import { NextPage } from "next"
+// import { useRouter } from "next/router"
+import { useParams, usePathname, useRouter } from "next/navigation"
 import { useInput } from "@/hooks/useInput"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -19,6 +23,26 @@ const DetailPage: NextPage<Props> = ({}) => {
     }
   })
   const [{ inputVal }, onInputChange] = useInput({ inputVal: "" })
+  const path = useRouter()
+  const params = useParams()
+  const getDetail = async () => {
+    if (params.id) {
+      const { data, error } = await fetchApi(`/mogakos/${params.id}`, {
+        method: "get",
+      })
+      console.log(error)
+      console.log(data)
+      // 통신 성공시 error undefined
+      if (!error) {
+        //통신 성공후 처리 로직
+      } else {
+        //통신 실패후 처리 로직
+      }
+    }
+  }
+  useEffect(() => {
+    getDetail()
+  })
   return (
     <>
       <div className="container max-w-[750px]">
