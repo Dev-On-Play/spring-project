@@ -124,6 +124,7 @@ const DetailPage: NextPage<Props> = ({}) => {
               profile={item.profile}
               nickName={item.nickName}
               createDate={item.createDate}
+              childComment={idx % 2 === 0 ? [coments[idx]] : []}
             />
           )
         })}
