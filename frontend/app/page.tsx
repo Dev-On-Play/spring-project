@@ -7,7 +7,6 @@ export default function Home() {
   const path = usePathname();
   //권한에 따른 > 관리자 페이지 or일반 사용자 페이지 이동 관리
   useEffect(() => {
-    console.log(path);
     if (path === "/") {
       router.push("/mainPage");
     }

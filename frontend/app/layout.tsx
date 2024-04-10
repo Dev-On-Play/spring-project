@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "@/styles/globals.css";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import "@/styles/globals.css"
+import Footer from "@/components/layout/Footer"
+import Header from "@/components/layout/Header"
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Mos",
@@ -12,20 +12,22 @@ export const metadata: Metadata = {
   icons: {
     icon: "/faviconDiscode.png",
   },
-};
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="ko">
+      <body className={`${inter.className} bg-[#f8f9fa]`}>
         <Header />
-        {children}
+        <main className="container grid place-items-center px-4 md:mx-auto">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>
-  );
+  )
 }

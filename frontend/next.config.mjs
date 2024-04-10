@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   swcMinify: true,
 
   //타입스크립트 적용
@@ -9,6 +9,15 @@ const nextConfig = {
     tsconfigPath: "tsconfig.json",
   },
   distDir: ".next",
-};
+  async rewrites() {
+    //redirects  rewrites
+    return [
+      {
+        source: `${process.env.NEXT_PUBLIC_BASE_URL}/:path*`,
+        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_BASE_URL}/:path*`,
+      },
+    ]
+  },
+}
 
-export default nextConfig;
+export default nextConfig
