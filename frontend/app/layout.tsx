@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "@/styles/globals.css"
+import CommonLoading from "@/components/common/Loading"
 import Footer from "@/components/layout/Footer"
 import Header from "@/components/layout/Header"
 
@@ -22,6 +23,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${inter.className} bg-[#f8f9fa]`}>
+        <CommonLoading />
         <Header />
         <main className="container grid place-items-center px-4 md:mx-auto">
           {children}

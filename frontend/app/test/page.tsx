@@ -83,7 +83,7 @@ export default function Component() {
       </div>
 
       <h1>zustand 상태관리 </h1>
-      <div>{countState.count}</div>
+      <div>{countState}</div>
       <CommonButton
         text={"증가"}
         className={""}

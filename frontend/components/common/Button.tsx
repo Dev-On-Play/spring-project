@@ -16,7 +16,7 @@ export default function CommonButton(props: {
     | "link"
     | null
     | undefined
-  onClick?: () => {}
+  onClick?: any
 }) {
   return (
     <Button

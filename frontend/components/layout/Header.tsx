@@ -9,18 +9,20 @@ export default function Header() {
     router.push("/login")
   }
   return (
-    <div className="mt-6 flex flex-row justify-around">
+    <div className="flex flex-row justify-around pt-6">
       <div className="grid w-[92px] place-items-center pr-8"></div>
       <div className="box-border grid h-24 w-80 place-items-center overflow-hidden bg-violet-500">
         로고 영역
       </div>
-      <div className="grid place-items-center pl-8" onClick={goPage}>
+      <div className="grid place-items-center pl-8">
         <svg
+          className="hover:cursor-pointer"
           width="60"
           height="60"
           viewBox="0 0 60 60"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
+          onClick={goPage}
         >
           <g opacity="0.6">
             <circle

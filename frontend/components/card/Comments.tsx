@@ -23,7 +23,7 @@ const CardComments: NextPage<Props> = ({
 }) => {
   return (
     <div className={`${className ? className : ""} py-2`}>
-      <div className="relative flex min-h-[80px] items-center rounded-2xl border border-solid border-[#a1a1aa80]">
+      <div className="relative flex min-h-[80px] items-center rounded-2xl border border-solid border-[#a1a1aa80] shadow-md">
         <div className="ml-2 mr-4 flex flex-col items-center justify-center">
           <CommonAvatar imgSrc={profile} alt={nickName} fallback={nickName} />
           <div>{nickName}</div>
