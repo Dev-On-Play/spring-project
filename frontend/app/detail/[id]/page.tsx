@@ -17,13 +17,14 @@ interface Props {}
 const DetailPage: NextPage<Props> = ({}) => {
   const coments = Array.from({ length: 30 }, () => 0).map((item, idx) => {
     return {
+      comentId: "코멘트 아이디 정보",
       contents: `댓글 영역입니다 ${idx + 1}`,
       profile: "https://github.com/shadcn.png",
       nickName: `닉네임${idx + 1}`,
       createDate: `2024-04-${idx + 1} 00:00:00`,
     }
   })
-  const [inputVal, onInputChange] = useInput("")
+  const [inputVal, onChangeInputVal, setInputVal] = useInput("")
   const path = useRouter()
   const params = useParams()
   const { onLoading, offLoading } = useLoadingStore((state) => state)
@@ -114,7 +115,7 @@ const DetailPage: NextPage<Props> = ({}) => {
             type="string"
             value={inputVal}
             placeholder="댓글을 입력해주세요"
-            onChange={onInputChange}
+            onChange={onChangeInputVal}
           />
         </div>
         <br />
@@ -122,6 +123,7 @@ const DetailPage: NextPage<Props> = ({}) => {
           return (
             <CardComments
               key={idx}
+              comentId={item.comentId}
               contents={item.contents}
               profile={item.profile}
               nickName={item.nickName}

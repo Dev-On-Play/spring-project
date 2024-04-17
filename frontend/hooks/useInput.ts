@@ -7,7 +7,7 @@ const useInput = (initialValue: any) => {
   const handler = useCallback((e: any) => {
     setValue(e.target.value)
   }, [])
-  return [value, handler]
+  return [value, handler, setValue]
 }
 
 export { useInput }
