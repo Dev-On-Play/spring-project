@@ -42,7 +42,7 @@ public class MogakoController {
 
     @Operation(summary = "신규 모각코 생성")
     @PostMapping("/api/mogakos/create")
-    public ResponseEntity<Void> createMogako(@PathVariable Long mogakoId) {
+    public ResponseEntity<Void> createMogako() {
         Long createdMogakoId = 0L;
         return ResponseEntity.created(URI.create("api/mogakos/" + createdMogakoId)).build();
     }
