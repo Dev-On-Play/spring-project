@@ -1,4 +1,6 @@
 "use client"
+
+import { useCallback } from "react"
 import { NextPage } from "next"
 import {
   AlertDialog,
@@ -11,20 +13,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
+import { Button, ButtonProps } from "@/components/ui/button"
 
-interface Props {
+interface Props extends ButtonProps {
   callText: string
   dialogTitle: string
   dialogText: string
   isCancell: boolean
   cancellText: string
   confirmText: string
+  btnClass?: string
+  callBack?: (e: any) => {} | any
+  [key: string]: any
   // alertOpen: boolean
-}
-
-const btnClick = (e: any) => {
-  console.log(e)
 }
 
 const CommonAlertDialog: NextPage<Props> = ({
@@ -34,28 +35,52 @@ const CommonAlertDialog: NextPage<Props> = ({
   isCancell,
   cancellText,
   confirmText,
+  btnClass,
+  variant = "outline",
+  fontSize,
+  callBack,
   // alertOpen = false,
 }) => {
+  const btnClick = useCallback(
+    (e: boolean) => {
+      console.log(e)
+      if (callBack) {
+        callBack(e)
+      }
+    },
+    [callBack]
+  )
+
   return (
     //  open={alertOpen}
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="outline">{callText}</Button>
+        <Button className={btnClass} size={fontSize} variant={variant}>
+          {callText}
+        </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className="w-[300px]">
         <AlertDialogHeader>
           <AlertDialogTitle>{dialogTitle}</AlertDialogTitle>
           <AlertDialogDescription>{dialogText}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           {isCancell ? (
-            <AlertDialogCancel>{cancellText}</AlertDialogCancel>
+            <AlertDialogCancel
+              className="shadow-md"
+              onClick={() => {
+                btnClick(false)
+              }}
+            >
+              {cancellText}
+            </AlertDialogCancel>
           ) : (
             <></>
           )}
           <AlertDialogAction
-            onClick={(e) => {
-              btnClick(e)
+            className="bg-[#32a287] shadow-md hover:bg-themeColor5 "
+            onClick={() => {
+              btnClick(true)
             }}
           >
             {confirmText}

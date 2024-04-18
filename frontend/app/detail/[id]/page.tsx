@@ -10,6 +10,7 @@ import { useInput } from "@/hooks/useInput"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import CardComments from "@/components/card/Comments"
+import CommonAlertDialog from "@/components/common/AlertDialog"
 import CommonButton from "@/components/common/Button"
 
 interface Props {}
@@ -28,7 +29,14 @@ const DetailPage: NextPage<Props> = ({}) => {
   const path = useRouter()
   const params = useParams()
   const { onLoading, offLoading } = useLoadingStore((state) => state)
-
+  const onParticipate = (Yn: boolean) => {
+    if (Yn) {
+      //참여시키기
+      console.log("참여")
+    } else {
+      console.log("취소")
+    }
+  }
   useEffect(() => {
     const getDetail = async () => {
       if (params.id) {
@@ -61,13 +69,21 @@ const DetailPage: NextPage<Props> = ({}) => {
       <div className="container flex h-[58px] max-w-[750px] place-content-between items-center">
         <div className="w-3/5 text-[26px] text-black">타이틀 영역</div>
         <div>
-          <CommonButton
-            text={"참여"}
-            className={
+          <CommonAlertDialog
+            callText={"참여"}
+            dialogTitle={"모각코 참여하기"}
+            dialogText={"모각코에 참여 하시겠습니까?"}
+            isCancell={true}
+            cancellText={"취소"}
+            confirmText={"참여"}
+            btnClass={
               "start-0 h-[30px] w-[67px] rounded-2xl bg-[#32a287] shadow-md hover:bg-themeColor5"
             }
             fontSize={"text-[12px]"}
             variant={"default"}
+            callBack={(e) => {
+              onParticipate(e)
+            }}
           />
         </div>
       </div>
