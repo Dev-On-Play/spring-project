@@ -1,6 +1,7 @@
 "use client"
 
 import fetchApi from "@/api/fetchApi"
+import { useLoadingStore } from "@/store/store"
 import { useEffect } from "react"
 import { NextPage } from "next"
 // import { useRouter } from "next/router"
@@ -9,6 +10,7 @@ import { useInput } from "@/hooks/useInput"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import CardComments from "@/components/card/Comments"
+import CommonAlertDialog from "@/components/common/AlertDialog"
 import CommonButton from "@/components/common/Button"
 
 interface Props {}
@@ -16,33 +18,42 @@ interface Props {}
 const DetailPage: NextPage<Props> = ({}) => {
   const coments = Array.from({ length: 30 }, () => 0).map((item, idx) => {
     return {
+      comentId: "코멘트 아이디 정보",
       contents: `댓글 영역입니다 ${idx + 1}`,
       profile: "https://github.com/shadcn.png",
       nickName: `닉네임${idx + 1}`,
       createDate: `2024-04-${idx + 1} 00:00:00`,
     }
   })
-  const [{ inputVal }, onInputChange] = useInput({ inputVal: "" })
+  const [inputVal, onChangeInputVal, setInputVal] = useInput("")
   const path = useRouter()
   const params = useParams()
-  const getDetail = async () => {
-    if (params.id) {
-      const { data, error } = await fetchApi(`/mogakos/${params.id}`, {
-        method: "get",
-      })
-      console.log(error)
-      console.log(data)
-      // 통신 성공시 error undefined
-      if (!error) {
-        //통신 성공후 처리 로직
-      } else {
-        //통신 실패후 처리 로직
-      }
+  const { onLoading, offLoading } = useLoadingStore((state) => state)
+  const onParticipate = (Yn: boolean) => {
+    if (Yn) {
+      //참여시키기
+      console.log("참여")
+    } else {
+      console.log("취소")
     }
   }
   useEffect(() => {
+    const getDetail = async () => {
+      if (params.id) {
+        onLoading()
+        await fetchApi(`/mogakos/${params.id}`, {
+          method: "get",
+        })
+          .then((res) => {
+            offLoading()
+          })
+          .catch((err) => {
+            offLoading()
+          })
+      }
+    }
     getDetail()
-  })
+  }, [params.id, onLoading, offLoading])
   return (
     <>
       <div className="container max-w-[750px]">
@@ -50,7 +61,7 @@ const DetailPage: NextPage<Props> = ({}) => {
           text={"뒤로"}
           fontSize={"text-[12px]"}
           className={
-            "start-0 h-[30px] w-[67px] rounded-2xl bg-[#32a287] hover:bg-themeColor5"
+            "start-0 h-[30px] w-[67px] rounded-2xl bg-[#32a287] shadow-md hover:bg-themeColor5"
           }
           variant={"default"}
         />
@@ -58,22 +69,30 @@ const DetailPage: NextPage<Props> = ({}) => {
       <div className="container flex h-[58px] max-w-[750px] place-content-between items-center">
         <div className="w-3/5 text-[26px] text-black">타이틀 영역</div>
         <div>
-          <CommonButton
-            text={"참여"}
-            className={
-              "start-0 h-[30px] w-[67px] rounded-2xl bg-[#32a287] hover:bg-themeColor5"
+          <CommonAlertDialog
+            callText={"참여"}
+            dialogTitle={"모각코 참여하기"}
+            dialogText={"모각코에 참여 하시겠습니까?"}
+            isCancell={true}
+            cancellText={"취소"}
+            confirmText={"참여"}
+            btnClass={
+              "start-0 h-[30px] w-[67px] rounded-2xl bg-[#32a287] shadow-md hover:bg-themeColor5"
             }
             fontSize={"text-[12px]"}
             variant={"default"}
+            callBack={(e) => {
+              onParticipate(e)
+            }}
           />
         </div>
       </div>
       <div className="container flex h-[58px] max-w-[750px] place-content-between items-center">
         <div className="flex w-3/5">
-          <div className="h-[42px]  w-[97px] content-center rounded-2xl border border-[#a1a1aa] text-center">
+          <div className="mr-3 h-[42px] w-[97px] content-center rounded-2xl border border-[#a1a1aa] text-center shadow-md">
             <span className="text-[12px]">카테고리</span>
           </div>
-          <div className="flex h-[42px] min-w-[150px] flex-wrap content-center items-center justify-center rounded-2xl border border-[#a1a1aa] text-center text-[12px]">
+          <div className="flex h-[42px] min-w-[150px] flex-wrap content-center items-center justify-center rounded-2xl border border-[#a1a1aa] text-center text-[12px] shadow-md">
             <div>
               <span className="">최소 : </span>
               <span>N 명 </span>
@@ -84,7 +103,7 @@ const DetailPage: NextPage<Props> = ({}) => {
             </div>
           </div>
         </div>
-        <div className="h-[42px] w-[234px] content-center rounded-2xl border border-solid border-[#a1a1aa80] bg-[#efefef99] text-center">
+        <div className="h-[42px] w-[234px] content-center rounded-2xl border border-solid border-[#a1a1aa80] bg-[#efefef99] text-center shadow-md">
           <span className="text-[12px] leading-[100%]">날짜 정보</span>
         </div>
       </div>
@@ -99,7 +118,7 @@ const DetailPage: NextPage<Props> = ({}) => {
       </div>
       <div className="container max-w-[750px] ">
         <Textarea
-          className="min-h-[326px] resize-none bg-[#efefef99]"
+          className="min-h-[326px] resize-none bg-[#efefef99] shadow-md"
           readOnly={true}
           value={"텍스트 영역"}
         ></Textarea>
@@ -108,11 +127,11 @@ const DetailPage: NextPage<Props> = ({}) => {
         <br />
         <div>
           <Input
-            className="h-[56px]"
+            className="h-[56px] shadow-md"
             type="string"
             value={inputVal}
             placeholder="댓글을 입력해주세요"
-            onChange={onInputChange}
+            onChange={onChangeInputVal}
           />
         </div>
         <br />
@@ -120,6 +139,7 @@ const DetailPage: NextPage<Props> = ({}) => {
           return (
             <CardComments
               key={idx}
+              comentId={item.comentId}
               contents={item.contents}
               profile={item.profile}
               nickName={item.nickName}
