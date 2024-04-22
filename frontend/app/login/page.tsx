@@ -1,13 +1,35 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import GoogleIcon from "@/components/icons/GoogleIcon"
 import KakaoIcon from "@/components/icons/kakaoIcon"
 import NaverIcon from "@/components/icons/NaverIcon"
 
 export default function Login() {
+  //카카오 로그인시 리턴 인가 코드
+  const [code, setCode] = useState<string | undefined | null>()
+  if (
+    typeof window !== "undefined" &&
+    new URL(window.location.href).searchParams.get("code") &&
+    !code
+  ) {
+    setCode(new URL(window.location.href).searchParams.get("code"))
+  }
+  const kakaoLogin = () => {
+    console.log("백엔드에 인가 코드 전달")
+  }
+  useEffect(() => {
+    if (code) {
+      kakaoLogin()
+    }
+  }, [code])
+
   const loginHandler = (trigger: string) => {
     if (trigger.includes("k")) {
-      console.log("카카오 로그인")
+      const redirect_uri = `${process.env.NEXT_PUBLIC_DOMAIN}/login` //Redirect URI
+      // oauth 요청 URL
+      const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_REST_API_KEY}&redirect_uri=${redirect_uri}&response_type=code`
+      window.location.href = kakaoURL
     } else if (trigger.includes("n")) {
       console.log("네이버 로그인")
     } else if (trigger.includes("g")) {
