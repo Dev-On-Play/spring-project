@@ -1,11 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
+import { NextPage } from "next"
 import GoogleIcon from "@/components/icons/GoogleIcon"
 import KakaoIcon from "@/components/icons/kakaoIcon"
 import NaverIcon from "@/components/icons/NaverIcon"
 
-export default function Login() {
+interface Props {}
+const Login: NextPage<Props> = ({}) => {
   //카카오 로그인시 리턴 인가 코드
   const [code, setCode] = useState<string | undefined | null>()
   if (
@@ -13,23 +15,39 @@ export default function Login() {
     new URL(window.location.href).searchParams.get("code") &&
     !code
   ) {
+    //정상적으로 인가코드 정보를 받았을때
     setCode(new URL(window.location.href).searchParams.get("code"))
   }
-  const kakaoLogin = () => {
-    console.log("백엔드에 인가 코드 전달")
+  // 인가 코드 받기 요청 실패
+  // error 및 error_description이 전달된 경우
+  // 문제 해결, 응답 코드를 참고해 에러 원인별 상황에 맞는 서비스 페이지나 안내 문구를 사용자에게 보여주도록 처리
+  // => #todo
+
+  //로그인 REST API
+  const kakaoRestApi = () => {
+    const redirect_uri = `${process.env.NEXT_PUBLIC_DOMAIN}/login` //Redirect URI
+    //https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api 참고 문서
+    // oauth 요청 URL
+    const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_REST_API_KEY}&redirect_uri=${redirect_uri}&response_type=code`
+    //로그인 실패시 or 기존 인가코드를 가지고 있다면 code 를 초기화
+    if (code) {
+      setCode("")
+    }
+    window.location.href = kakaoURL
   }
+  //실제 로그인 처리
+  const kakaoLogin = useCallback(() => {
+    console.log("백엔드로 인가코드 전달", code)
+  }, [code])
   useEffect(() => {
     if (code) {
       kakaoLogin()
     }
-  }, [code])
+  }, [code, kakaoLogin])
 
   const loginHandler = (trigger: string) => {
     if (trigger.includes("k")) {
-      const redirect_uri = `${process.env.NEXT_PUBLIC_DOMAIN}/login` //Redirect URI
-      // oauth 요청 URL
-      const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_REST_API_KEY}&redirect_uri=${redirect_uri}&response_type=code`
-      window.location.href = kakaoURL
+      kakaoRestApi()
     } else if (trigger.includes("n")) {
       console.log("네이버 로그인")
     } else if (trigger.includes("g")) {
@@ -66,3 +84,4 @@ export default function Login() {
     </div>
   )
 }
+export default Login
