@@ -6,8 +6,10 @@ import lombok.RequiredArgsConstructor;
 import mos.mogako.dto.CreateMogakoRequest;
 import mos.mogako.dto.MogakoResponse;
 import mos.mogako.dto.MogakosResponse;
+import mos.mogako.dto.UpdateMogakoRequest;
 import mos.mogako.entity.Mogako;
 import mos.mogako.service.MogakoService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,10 +46,11 @@ public class MogakoController {
 
     @Operation(summary = "단일 모각코 정보 수정")
     @PutMapping("/api/mogakos/{mogakoId}")
-    public ResponseEntity<MogakoResponse> modifyMogako(@PathVariable Long mogakoId) {
-        MogakoResponse mogakoResponse = MogakoResponse.from(tempMogako);
-        // 수정한 모각코 정보 반환
-        return ResponseEntity.ok(mogakoResponse);
+    public ResponseEntity<Void> modifyMogako(@PathVariable Long mogakoId, @RequestBody UpdateMogakoRequest request) {
+        Long updatedMogakoId = mogakoService.updateMogako(mogakoId, request);
+        return ResponseEntity.noContent()
+                .header(HttpHeaders.LOCATION, "api/mogakos/" + updatedMogakoId)
+                .build();
     }
 
     @Operation(summary = "신규 모각코 생성")

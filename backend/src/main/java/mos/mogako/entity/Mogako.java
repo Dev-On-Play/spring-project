@@ -56,4 +56,18 @@ public class Mogako extends BaseTimeEntity {
                 participantLimit, 1, minimumParticipantCount,
                 detailContent, Status.RECRUITING);
     }
+
+    public void update(Long categoryId,
+                       String name, String summary,
+                       LocalDateTime startDate, LocalDateTime endDate,
+                       int participantLimit, int minimumParticipantCount, String detailContent) {
+        // todo : 카테고리 엔티티 수정 이후 카테고리 연관관계 변경도 추가하기
+        this.name = name;
+        this.summary = summary;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.participantLimit = participantLimit;
+        this.minimumParticipantCount = minimumParticipantCount;
+        this.detailContent = detailContent;
+    }
 }

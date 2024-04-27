@@ -2,13 +2,13 @@ package mos.integration;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import mos.mogako.dto.CreateMogakoRequest;
 import mos.mogako.dto.MogakoResponse;
+import mos.mogako.dto.UpdateMogakoRequest;
 import mos.mogako.entity.Mogako;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,9 +38,6 @@ class MogakoIntegrationTest extends IntegrationTest {
 
         entityManager.persist(mogako1);
         entityManager.persist(mogako2);
-
-        System.out.println(mogako1.getId());
-        System.out.println(mogako2.getId());
 
         entityManager.flush();
         entityManager.clear();
@@ -73,7 +70,7 @@ class MogakoIntegrationTest extends IntegrationTest {
 
     @Test
     void 모각코_조회_테스트() throws Exception {
-        // given, when
+        // given
         MvcResult result = this.mockMvc.perform(get("/api/mogakos/{mogakoId}", mogako1.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -87,5 +84,32 @@ class MogakoIntegrationTest extends IntegrationTest {
             softly.assertThat(response.id()).isEqualTo(mogako1.getId());
             softly.assertThat(response.name()).isEqualTo(mogako1.getName());
         });
+    }
+
+    @Test
+    void 모각코_수정_테스트() throws Exception {
+        // given
+        Long updatedCategoryId = 2L;
+        String updatedName = "모각코 이름 수정";
+        String updatedSummary = "모각코 짧은 소개 수정";
+        LocalDateTime updatedStartDate = LocalDateTime.now().plusDays(2L);
+        LocalDateTime updatedEndDate = LocalDateTime.now().plusDays(3L);
+        int updatedParticipantLimit = 10;
+        int updatedMinimumParticipantCount = 4;
+        String updatedDetailContent = "모각코 상세설명 수정";
+
+        UpdateMogakoRequest jsonRequest = new UpdateMogakoRequest(updatedCategoryId,
+                updatedName, updatedSummary,
+                updatedStartDate, updatedEndDate,
+                updatedParticipantLimit, updatedMinimumParticipantCount,
+                updatedDetailContent);
+        String request = objectMapper.writeValueAsString(jsonRequest);
+
+        // then
+        this.mockMvc.perform(put("/api/mogakos/{mogakoId}", mogako1.getId())
+                        .content(request)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent())
+                .andExpect(header().exists(HttpHeaders.LOCATION));
     }
 }
