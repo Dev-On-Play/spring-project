@@ -21,7 +21,7 @@ import java.util.ArrayList;
 @RequiredArgsConstructor
 public class MogakoController {
 
-    private static Mogako tempMogako = Mogako.createNewMogako("모각코 이름", "모각코 짧은 소개",
+    private static final Mogako tempMogako = Mogako.createNewMogako("모각코 이름", "모각코 짧은 소개",
             LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
             8, 2,
             "모각코 상세설명");
@@ -35,10 +35,10 @@ public class MogakoController {
         return ResponseEntity.ok(mogakosResponse);
     }
 
-    @Operation(summary = "단일 모각코 상세 정보 조회")
+    @Operation(summary = "단일 모각코 상세정보 조회")
     @GetMapping("/api/mogakos/{mogakoId}")
     public ResponseEntity<MogakoResponse> findMogako(@PathVariable Long mogakoId) {
-        MogakoResponse response = MogakoResponse.from(tempMogako);
+        MogakoResponse response = mogakoService.findMogako(mogakoId);
         return ResponseEntity.ok(response);
     }
 

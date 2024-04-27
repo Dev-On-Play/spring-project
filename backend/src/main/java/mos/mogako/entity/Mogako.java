@@ -1,17 +1,12 @@
 package mos.mogako.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import java.time.LocalDateTime;
-
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import mos.common.BaseTimeEntity;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -31,13 +26,15 @@ public class Mogako extends BaseTimeEntity {
     private Integer minimumParticipantCount;
     private String detailContent;
 
+    // todo : 카테고리 엔티티 작업 완료되면 엔티티 구조 변경 및 연관관계 추가 + 테스트 수정
+
     @Enumerated(EnumType.STRING)
     private Status status;
 
     private Mogako(String name, String summary,
-                  LocalDateTime startDate, LocalDateTime endDate,
-                  Integer participantLimit, Integer participantCount, Integer minimumParticipantCount,
-                  String detailContent, Status status) {
+                   LocalDateTime startDate, LocalDateTime endDate,
+                   Integer participantLimit, Integer participantCount, Integer minimumParticipantCount,
+                   String detailContent, Status status) {
         this.name = name;
         this.summary = summary;
         this.startDate = startDate;
@@ -50,9 +47,9 @@ public class Mogako extends BaseTimeEntity {
     }
 
     public static Mogako createNewMogako(String name, String summary,
-                                  LocalDateTime startDate, LocalDateTime endDate,
-                                  Integer participantLimit, Integer minimumParticipantCount,
-                                  String detailContent) {
+                                         LocalDateTime startDate, LocalDateTime endDate,
+                                         Integer participantLimit, Integer minimumParticipantCount,
+                                         String detailContent) {
         // todo : 모각코장이 모각코를 만들면 자기 자신이 자동으로 참여처리되도록 구현 필요.
         return new Mogako(name, summary,
                 startDate, endDate,
