@@ -35,7 +35,18 @@ const Login: NextPage<Props> = ({}) => {
     }
     window.location.href = kakaoURL
   }
-  //실제 로그인 처리
+
+  const naverLogin = () => {
+      const callbackUrl = `${process.env.NEXT_PUBLIC_DOMAIN}/login`
+      const clientId = process.env.NEXT_PUBLIC_NAVER_CLIENT_ID
+      const apiUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${callbackUrl}`
+      if (code) {
+          setCode("")
+      }
+      window.location.href = apiUrl;
+  }
+
+  // 실제 로그인 처리
   const kakaoLogin = useCallback(() => {
     console.log("백엔드로 인가코드 전달", code)
   }, [code])
@@ -44,12 +55,11 @@ const Login: NextPage<Props> = ({}) => {
       kakaoLogin()
     }
   }, [code, kakaoLogin])
-
   const loginHandler = (trigger: string) => {
     if (trigger.includes("k")) {
       kakaoRestApi()
     } else if (trigger.includes("n")) {
-      console.log("네이버 로그인")
+      naverLogin()
     } else if (trigger.includes("g")) {
       console.log("구글 로그인")
     }
