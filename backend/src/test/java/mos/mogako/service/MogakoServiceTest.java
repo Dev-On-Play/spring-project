@@ -1,20 +1,22 @@
 package mos.mogako.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import mos.mogako.dto.CreateMogakoRequest;
 import mos.mogako.dto.MogakoResponse;
+import mos.mogako.dto.MogakosResponse;
 import mos.mogako.dto.UpdateMogakoRequest;
 import mos.mogako.entity.Mogako;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
 
@@ -68,7 +70,7 @@ class MogakoServiceTest {
         MogakoResponse response = mogakoService.findMogako(mogako1.getId());
 
         // then
-        SoftAssertions.assertSoftly((softly) -> {
+        assertSoftly((softly) -> {
             softly.assertThat(response.id()).isEqualTo(mogako1.getId());
             softly.assertThat(response.name()).isEqualTo(mogako1.getName());
         });
@@ -100,7 +102,7 @@ class MogakoServiceTest {
         entityManager.clear();
         Mogako updatedMogako = entityManager.find(Mogako.class, updatedMogakoId);
 
-        SoftAssertions.assertSoftly((softly) -> {
+        assertSoftly((softly) -> {
             softly.assertThat(updatedMogako.getName()).isEqualTo(updatedName);
             softly.assertThat(updatedMogako.getSummary()).isEqualTo(updatedSummary);
             softly.assertThat(updatedMogako.getStartDate()).isEqualTo(updatedStartDate);
@@ -108,6 +110,36 @@ class MogakoServiceTest {
             softly.assertThat(updatedMogako.getParticipantLimit()).isEqualTo(updatedParticipantLimit);
             softly.assertThat(updatedMogako.getMinimumParticipantCount()).isEqualTo(updatedMinimumParticipantCount);
             softly.assertThat(updatedMogako.getDetailContent()).isEqualTo(updatedDetailContent);
+        });
+    }
+
+    @Test
+    void 전체_모각코_목록을_페이지_조회한다() {
+        // given
+        int pageNumber = 1;
+        int pageSize = 2;
+        int totalElements = 10;
+
+        for (int i = 1; i < totalElements; i++) {
+            entityManager.persist(Mogako.createNewMogako("모각코 이름" + i, "모각코 짧은 소개",
+                    LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
+                    8, 2,
+                    "모각코 상세설명"));
+        }
+        entityManager.flush();
+        entityManager.clear();
+
+        PageRequest request = PageRequest.of(pageNumber, pageSize);
+
+        // when
+        MogakosResponse response = mogakoService.findAll(request);
+
+        // then
+        assertSoftly((softly) -> {
+            softly.assertThat(response.pageNumber()).isEqualTo(pageNumber);
+            softly.assertThat(response.mogakos().size()).isEqualTo(pageSize);
+            softly.assertThat(response.totalPages()).isEqualTo(totalElements / pageSize);
+            softly.assertThat(response.totalElements()).isEqualTo(totalElements);
         });
     }
 }

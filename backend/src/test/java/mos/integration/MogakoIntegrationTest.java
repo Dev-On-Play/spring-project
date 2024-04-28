@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import mos.mogako.dto.CreateMogakoRequest;
 import mos.mogako.dto.MogakoResponse;
+import mos.mogako.dto.MogakosResponse;
 import mos.mogako.dto.UpdateMogakoRequest;
 import mos.mogako.entity.Mogako;
 import org.assertj.core.api.SoftAssertions;
@@ -16,9 +17,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.util.LinkedMultiValueMap;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.List;
 
 class MogakoIntegrationTest extends IntegrationTest {
 
@@ -111,5 +114,34 @@ class MogakoIntegrationTest extends IntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent())
                 .andExpect(header().exists(HttpHeaders.LOCATION));
+    }
+
+    @Test
+    void 전체_모각코_목록_조회_테스트() throws Exception {
+        // given
+        LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        int pageNum = 0;
+        int pageSize = 2;
+        params.add("page", String.valueOf(pageNum));
+        params.add("size", String.valueOf(pageSize));
+        params.add("sort", "id,desc");
+
+        // when
+        MvcResult result = this.mockMvc.perform(get("/api/mogakos")
+                        .queryParams(params)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // then
+        String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        MogakosResponse mogakosResponse = objectMapper.readValue(json, MogakosResponse.class);
+        List<MogakoResponse> mogakos = mogakosResponse.mogakos();
+
+        SoftAssertions.assertSoftly((softly) -> {
+            softly.assertThat(mogakosResponse.pageNumber()).isEqualTo(pageNum);
+            softly.assertThat(mogakos.size()).isEqualTo(pageSize);
+            softly.assertThat(mogakos.get(0).id()).isGreaterThan(mogakos.get(1).id());
+        });
     }
 }

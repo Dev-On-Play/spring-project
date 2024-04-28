@@ -7,34 +7,25 @@ import mos.mogako.dto.CreateMogakoRequest;
 import mos.mogako.dto.MogakoResponse;
 import mos.mogako.dto.MogakosResponse;
 import mos.mogako.dto.UpdateMogakoRequest;
-import mos.mogako.entity.Mogako;
 import mos.mogako.service.MogakoService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Pageable;
 import java.net.URI;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 @Tag(name = "모각코 관련 API")
 @RestController
 @RequiredArgsConstructor
 public class MogakoController {
 
-    private static final Mogako tempMogako = Mogako.createNewMogako("모각코 이름", "모각코 짧은 소개",
-            LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
-            8, 2,
-            "모각코 상세설명");
-
     private final MogakoService mogakoService;
 
-    @Operation(summary = "모각코 일정 전체 조회")
+    @Operation(summary = "전체 모각코 목록 조회")
     @GetMapping("/api/mogakos")
-    public ResponseEntity<MogakosResponse> findMogakos(Pageable pageable) {
-        MogakosResponse mogakosResponse = new MogakosResponse(10, new ArrayList<>());
-        return ResponseEntity.ok(mogakosResponse);
+    public MogakosResponse findMogakos(Pageable pageable) {
+        return mogakoService.findAll(pageable);
     }
 
     @Operation(summary = "단일 모각코 상세정보 조회")

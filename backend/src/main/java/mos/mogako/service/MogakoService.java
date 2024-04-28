@@ -4,9 +4,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import mos.mogako.dto.CreateMogakoRequest;
 import mos.mogako.dto.MogakoResponse;
+import mos.mogako.dto.MogakosResponse;
 import mos.mogako.dto.UpdateMogakoRequest;
 import mos.mogako.entity.Mogako;
 import mos.mogako.repository.MogakoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -44,5 +47,10 @@ public class MogakoService {
                 request.detailContent());
 
         return mogako.getId();
+    }
+
+    public MogakosResponse findAll(Pageable pageable) {
+        Page<Mogako> mogakos = mogakoRepository.findAll(pageable);
+        return MogakosResponse.from(mogakos);
     }
 }
