@@ -1,0 +1,38 @@
+[
+  {
+    "profileImageUrl": "https://www.svgrepo.com/show/496485/profile-circle.svg",
+    "nickname": "JaneDoe123",
+    "title": "Group Study Session",
+    "date": "2024-05-01",
+    "category": "Education",
+    "minPeople": 5,
+    "currentPeople": 3,
+    "maxPeople": 10,
+    "hashtags": ["study", "collaboration", "education"],
+    "content": "Join us for a group study session on advanced calculus. All levels are welcome!"
+  },
+  {
+    "profileImageUrl": "https://www.svgrepo.com/show/496485/profile-circle.svg",
+    "nickname": "CoderMike",
+    "title": "Hackathon Kickoff",
+    "date": "2024-05-03",
+    "category": "Tech",
+    "minPeople": 10,
+    "currentPeople": 8,
+    "maxPeople": 20,
+    "hashtags": ["hackathon", "coding", "software"],
+    "content": "Ready to build some innovative projects? Join our community hackathon and bring your ideas to life!"
+  },
+  {
+    "profileImageUrl": "https://www.svgrepo.com/show/496485/profile-circle.svg",
+    "nickname": "EcoWarrior",
+    "title": "Beach Cleanup Drive",
+    "date": "2024-05-05",
+    "category": "Environment",
+    "minPeople": 2,
+    "currentPeople": 1,
+    "maxPeople": 50,
+    "hashtags": ["cleanup", "beach", "eco"],
+    "content": "Help us clean our local beach this weekend. Let’s make a difference together!"
+  }
+]
