@@ -5,7 +5,9 @@ import mos.member.entity.Member;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public record CommentResponse(long id, long mogako_id, CommentMember member, ChildComments childComments, String contents, LocalDateTime created_date){
 
@@ -18,6 +20,10 @@ public record CommentResponse(long id, long mogako_id, CommentMember member, Chi
 
     static record ChildComments(List<ChildComment> childList){
 
+        public static ChildComments from(List<Comment> commentList) {
+            List<ChildComment> comments = commentList.stream().map(ChildComment::from).toList();
+            return new ChildComments(comments);
+        }
     }
     static record ChildComment(long id, long mogako_id, CommentMember member, Long parents_id, String contents, LocalDateTime created_date){
         public static ChildComment from(Comment comment){
@@ -37,9 +43,9 @@ public record CommentResponse(long id, long mogako_id, CommentMember member, Chi
         return new CommentResponse(comment.getId(),
                 comment.getMogako().getId(),
                 CommentMember.from(comment.getMember()),
-                new ChildComments(new ArrayList<>()),
+                ChildComments.from(comment.getComments()),
                 comment.getContents(),
                 comment.getCreatedDate()
-                );
+        );
     }
 }
