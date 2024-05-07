@@ -37,4 +37,26 @@ public class Comment extends BaseTimeEntity {
     private List<Comment> comments = new ArrayList<>();
 
     private String contents;
+
+
+    public Comment(Mogako mogako, Member member, Comment parent, String contents) {
+        this.mogako = mogako;
+        this.member = member;
+        this.parent = parent;
+        this.contents = contents;
+    }
+
+    public Comment(Mogako mogako, Member member, String contents) {
+        this.mogako = mogako;
+        this.member = member;
+        this.contents = contents;
+    }
+
+    public static Comment createNewChildComment(Mogako mogako, Member member, Comment parent, String contents){
+        return new Comment(mogako,member,parent,contents);
+    }
+
+    public static Comment createNewComment(Mogako mogako, Member member,String contents){
+        return new Comment(mogako, member, contents);
+    }
 }
