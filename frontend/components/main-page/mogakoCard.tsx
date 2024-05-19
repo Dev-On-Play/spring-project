@@ -47,7 +47,7 @@ const MogakoInfoCard: React.FC<CardProps> = ({
 
                 <div className="col-span-5 ml-1">
                   <CardTitle>
-                    <div className="rounded-full border text-base mb-1 p-1 text-center">
+                    <div className="rounded-full border text-base mb-1 p-1 text-center overflow-hidden">
                       {title}
                     </div>
                   </CardTitle>
