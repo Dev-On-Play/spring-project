@@ -110,53 +110,58 @@ export default function MyPage() {
     ]
     return (
         <div>
-            <div className="container min-w-[650px] flex mt-10">
+            <div className="container mt-10 flex min-w-[650px]">
                 <div className="mr-5 content-center">
                     <CommonAvatar className="size-20" imgSrc={"https://github.com/shadcn.png"}/>
                 </div>
-                <div className="flex-1 space-y-4 ml-5">
+                <div className="ml-5 flex-1 space-y-4">
                     <div className="flex space-x-6">
-                        <CommonDialog className="min-w-[200px]" triggerText="Nickname" dialogTitle="Edit Nickname" dialogLabelText="Name"></CommonDialog>
-                        <div className="flex flex-1 self-center space-x-2">
+                        <CommonDialog className="min-w-[200px]" triggerText="Nickname" dialogTitle="Edit Nickname"
+                                      dialogLabelText="Name"></CommonDialog>
+                        <div className="flex flex-1 space-x-2 self-center">
                             <Switch/>
                             <div className="self-start">
                                 <Label>온라인</Label>
                             </div>
                         </div>
                     </div>
-                    <CommonDialog className="min-w-[400px]" triggerText="Introduce Myself" dialogTitle="Edit Introduce" dialogLabelText="Introduce"></CommonDialog>
+                    <CommonDialog className="min-w-[400px]" triggerText="Introduce Myself" dialogTitle="Edit Introduce"
+                                  dialogLabelText="Introduce"></CommonDialog>
                 </div>
             </div>
-            <div className="container min-w-[750px] flex flex-col mt-10">
+            <div className="container mt-10 flex min-w-[750px] flex-col">
                 <div
-                    className="bg-themeColor3 max-w-[200px] min-h-[48px] rounded-[8px] text-black text-center place-content-center">
+                    className="min-h-[48px] max-w-[200px] place-content-center rounded-[8px] bg-themeColor3 text-center text-black">
                     참여 예정인 모각코
                 </div>
-                {items.map((item, idx) => {
+                {items.map((item) => {
                     return (
-                        <SimpleMogako title={item.title} category={item.category} date={item.date} min={item.min} max={item.max} dueDate={item.dueDate} visibility={item.visibility} ></SimpleMogako>
+                        <SimpleMogako title={item.title} category={item.category} date={item.date} min={item.min}
+                                      max={item.max} dueDate={item.dueDate} visibility={item.visibility}></SimpleMogako>
                     )
                 })}
             </div>
-            <div className="container max-w-[750px] flex flex-col mt-10">
+            <div className="container mt-10 flex max-w-[750px] flex-col">
                 <div
-                    className="bg-themeColor3 max-w-[200px] min-h-[48px] rounded-[8px] text-black text-center place-content-center">
+                    className="min-h-[48px] max-w-[200px] place-content-center rounded-[8px] bg-themeColor3 text-center text-black">
                     참여 중인 모각코
                 </div>
-                {items.map((item, idx) => {
+                {items.map((item) => {
                     return (
-                        <SimpleMogako title={item.title} category={item.category} date={item.date} min={item.min} max={item.max} dueDate={item.dueDate} visibility={item.visibility} ></SimpleMogako>
+                        <SimpleMogako title={item.title} category={item.category} date={item.date} min={item.min}
+                                      max={item.max} dueDate={item.dueDate} visibility={item.visibility}></SimpleMogako>
                     )
                 })}
             </div>
-            <div className="container max-w-[750px] flex flex-col mt-10">
+            <div className="container mt-10 flex max-w-[750px] flex-col">
                 <div
-                    className="bg-themeColor3 max-w-[200px] min-h-[48px] rounded-[8px] text-black text-center place-content-center">
+                    className="min-h-[48px] max-w-[200px] place-content-center rounded-[8px] bg-themeColor3 text-center text-black">
                     참여한 모각코
                 </div>
-                {items.map((item, idx) => {
+                {items.map((item) => {
                     return (
-                        <SimpleMogako title={item.title} category={item.category} date={item.date} min={item.min} max={item.max} dueDate={item.dueDate} visibility={item.visibility} ></SimpleMogako>
+                        <SimpleMogako title={item.title} category={item.category} date={item.date} min={item.min}
+                                      max={item.max} dueDate={item.dueDate} visibility={item.visibility}></SimpleMogako>
                     )
                 })}
             </div>
