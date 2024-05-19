@@ -10,6 +10,7 @@ interface Props {}
 const Login: NextPage<Props> = ({}) => {
   //카카오 로그인시 리턴 인가 코드
   const [code, setCode] = useState<string | undefined | null>()
+  const redirect_uri = `${process.env.NEXT_PUBLIC_DOMAIN}/login` //Redirect URI
   if (
     typeof window !== "undefined" &&
     new URL(window.location.href).searchParams.get("code") &&
@@ -25,7 +26,6 @@ const Login: NextPage<Props> = ({}) => {
 
   //로그인 REST API
   const kakaoRestApi = () => {
-    const redirect_uri = `${process.env.NEXT_PUBLIC_DOMAIN}/login` //Redirect URI
     //https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api 참고 문서
     // oauth 요청 URL
     const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_REST_API_KEY}&redirect_uri=${redirect_uri}&response_type=code`
@@ -37,24 +37,33 @@ const Login: NextPage<Props> = ({}) => {
   }
 
   const naverLogin = () => {
-      const callbackUrl = `${process.env.NEXT_PUBLIC_DOMAIN}/login`
-      const clientId = process.env.NEXT_PUBLIC_NAVER_CLIENT_ID
-      const apiUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${callbackUrl}`
-      if (code) {
-          setCode("")
-      }
-      window.location.href = apiUrl;
+    const callbackUrl = `${process.env.NEXT_PUBLIC_DOMAIN}/login`
+    const clientId = process.env.NEXT_PUBLIC_NAVER_CLIENT_ID
+    const apiUrl = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${clientId}&redirect_uri=${callbackUrl}`
+    if (code) {
+      setCode("")
+    }
+    window.location.href = apiUrl
   }
 
+  const googleLogin = () => {
+    // redirect_uri
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
+    const apiUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirect_uri}&response_type=code&scope=email profile`
+    if (code) {
+      setCode("")
+    }
+    window.location.href = apiUrl
+  }
   // 실제 로그인 처리
-  const kakaoLogin = useCallback(() => {
+  const loginProcessing = useCallback(() => {
     console.log("백엔드로 인가코드 전달", code)
   }, [code])
   useEffect(() => {
     if (code) {
-      kakaoLogin()
+      loginProcessing()
     }
-  }, [code, kakaoLogin])
+  }, [code, loginProcessing])
   const loginHandler = (trigger: string) => {
     if (trigger.includes("k")) {
       kakaoRestApi()
@@ -62,6 +71,7 @@ const Login: NextPage<Props> = ({}) => {
       naverLogin()
     } else if (trigger.includes("g")) {
       console.log("구글 로그인")
+      googleLogin()
     }
   }
   return (
