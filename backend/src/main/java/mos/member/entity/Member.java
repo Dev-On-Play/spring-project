@@ -24,7 +24,8 @@ public class Member extends BaseTimeEntity {
     private String profile;
     private Double credibility;
 
-    public Member(String nickname, String email, String introduction, String profile, Double credibility) {
+    public Member(String nickname, String email,
+                  String introduction, String profile, Double credibility) {
         this.nickname = nickname;
         this.email = email;
         this.introduction = introduction;
@@ -32,8 +33,8 @@ public class Member extends BaseTimeEntity {
         this.credibility = credibility;
     }
 
-    public static Member createNewMember(String nickname, String email, String introduction,
-                                         String profile, double credibility) {
+    public static Member createNewMember(String nickname, String email,
+                                         String introduction, String profile, double credibility) {
         return new Member(nickname, email, introduction, profile, credibility);
     }
 

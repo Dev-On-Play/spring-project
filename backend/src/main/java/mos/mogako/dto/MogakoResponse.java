@@ -9,7 +9,7 @@ public record MogakoResponse(Long id, String name, String summary,
                              Integer participantLimit, Integer participantCount,
                              Integer minimumParticipantCount, String detailContent) {
 
-    public static MogakoResponse from (Mogako mogako) {
+    public static MogakoResponse from(Mogako mogako) {
         return new MogakoResponse(mogako.getId(), mogako.getName(), mogako.getSummary(),
                 mogako.getStartDate(), mogako.getEndDate(),
                 mogako.getParticipantLimit(), mogako.getParticipantCount(),
