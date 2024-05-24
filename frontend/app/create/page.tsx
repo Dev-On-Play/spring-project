@@ -3,23 +3,12 @@
 import CommonButton from "@/components/common/Button";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-} from "@/components/ui/select";
+import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import * as React from "react";
+import {useState} from "react";
 import {Button} from "@/components/ui/button";
 import {X} from "lucide-react";
-import {useState} from "react";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
+import {Popover, PopoverContent, PopoverTrigger,} from "@/components/ui/popover";
 import CommonCalendar from "@/components/common/Calendar";
 
 type Tag = { id: number; tagName: string }
@@ -27,10 +16,24 @@ type Tag = { id: number; tagName: string }
 export default function CreatePage() {
     const TAG_NAME_LIMIT = 10
     const TAG_COUNT_LIMIT = 5
+    // title state
+    const [title, setTitle] = useState('')
+    // date state
+    const [date, onChange] = useState(new Date())
+    const day = ['일', '월', '화', '수', '목', '금', '토']
+    const formatDigit = (num: number) => String(num).padStart(2, '0')
+    const dateFormat = `${date.getFullYear()}-${formatDigit(date.getMonth())}-${formatDigit(date.getDate())} (${day[date.getDay()]}) ${formatDigit(date.getHours())}:${formatDigit(date.getMinutes())}`
+    // minimum participant state
+    const [minimumParticipant, setMinimumParticipant] = useState('')
+    // participant limit state
+    const [participant, setParticipant] = useState('')
+    // category state
+    const [category, setCategory] = useState('')
+    // tag state
     const [items, setItems] = useState<Tag[]>([])
     const [tagName, setTagName] = useState('')
     const [count, setCount] = useState(0)
-    const onChangeTagEvent = (event: { code: string; }) => {
+    const onAddTag = (event: { code: string; }) => {
         if (event.code === 'Enter') {
             if (tagName && tagName.length < TAG_NAME_LIMIT && items.length <= TAG_COUNT_LIMIT) {
                 setItems(items.concat({
@@ -45,10 +48,27 @@ export default function CreatePage() {
     const onTagRemoveClickEvent = (tag: Tag) => {
         setItems(items.filter(t => tag.id !== t.id))
     }
-    const [date, onChange] = useState(new Date())
-    const day = ['일', '월', '화', '수', '목', '금', '토']
-    const formatDigit = (num: number) => String(num).padStart(2, '0')
-    const dateFormat = `${date.getFullYear()}-${formatDigit(date.getMonth())}-${formatDigit(date.getDate())} (${day[date.getDay()]}) ${formatDigit(date.getHours())}:${formatDigit(date.getMinutes())}`
+    // description state
+    const [description, setDescription] = useState('')
+    // api request
+    const onClickCreateMogako = () => {
+        const mogako = {
+            name: title,
+            categoryId: 1,
+            startDate: date,
+            participantLimit: participant,
+            minimumParticipantCount: minimumParticipant,
+            detailContent: description,
+        }
+        fetch('http://localhost:8080/api/mogakos/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(mogako)
+        }).then(res => console.log(res))
+            .catch(e => console.error(e))
+    }
     return (
         <div className="container flex min-h-[610px] max-w-[750px] flex-col gap-4">
             <div className="">
@@ -62,7 +82,8 @@ export default function CreatePage() {
                 />
             </div>
             <div className="">
-                <Input placeholder="Enter Title" className="h-[52px] w-[750px] text-[26px]"></Input>
+                <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter Title"
+                       className="h-[52px] w-[750px] text-[26px]"></Input>
             </div>
             <div className="flex w-[750px] items-center gap-8">
                 <Popover>
@@ -77,7 +98,7 @@ export default function CreatePage() {
                     className="h-[32px] min-w-[80px] place-content-center rounded-[10px] bg-themeColor3 text-center text-[14px] text-black">
                     최소 인원
                 </div>
-                <Select>
+                <Select value={minimumParticipant} onValueChange={setMinimumParticipant}>
                     <SelectTrigger className="w-[130px] text-[10px]">
                         <SelectValue placeholder="Select an option"/>
                     </SelectTrigger>
@@ -96,7 +117,7 @@ export default function CreatePage() {
                     className="h-[32px] min-w-[80px] place-content-center rounded-[10px] bg-themeColor3 text-center text-[14px] text-black">
                     최대 인원
                 </div>
-                <Select>
+                <Select value={participant} onValueChange={setParticipant}>
                     <SelectTrigger className="w-[130px] text-[10px]">
                         <SelectValue placeholder="Select an option"/>
                     </SelectTrigger>
@@ -113,7 +134,7 @@ export default function CreatePage() {
                 </Select>
             </div>
             <div className="flex w-[750px] justify-between">
-                <Select>
+                <Select value={category} onValueChange={setCategory}>
                     <SelectTrigger className="w-[200px]">
                         <SelectValue placeholder="Select an Category"/>
                     </SelectTrigger>
@@ -152,13 +173,14 @@ export default function CreatePage() {
                         items.length < TAG_COUNT_LIMIT &&
                         <input className="ml-4 h-[35px] flex-1 rounded-[15px] text-[12px] outline-0"
                                placeholder="Enter Tag"
-                               value={tagName} onKeyDown={onChangeTagEvent}
+                               value={tagName} onKeyDown={onAddTag}
                                onChange={(e) => setTagName(e.target.value)}/>
                     }
                 </div>
             </div>
             <div className="">
-                <Textarea placeholder="Enter your mos description" className="min-h-[325px] min-w-[750px]"/>
+                <Textarea value={description} onChange={e => setDescription(e.target.value)}
+                          placeholder="Enter your mos description" className="min-h-[325px] min-w-[750px]"/>
             </div>
             <div className="flex w-[750px] flex-row-reverse">
                 <CommonButton
@@ -168,6 +190,7 @@ export default function CreatePage() {
                         "h-[30px] w-[128px] rounded-2xl bg-[#32a287] shadow-md hover:bg-themeColor5"
                     }
                     variant={"default"}
+                    onClick={onClickCreateMogako}
                 />
             </div>
         </div>
