@@ -38,7 +38,7 @@ public class MemberController {
 
     // todo : 로그인 기능 구현 이후 인가 관련 코드 추가하며 구현 예정
     @Operation(summary = "나의 멤버정보 수정")
-    @PutMapping("api/members/me")
+    @PutMapping("/api/members/me")
     public ResponseEntity<Void> updateMe(@RequestBody UpdateMemberRequest request) {
         Long updatedMemberId = 1L;
         return ResponseEntity.noContent()
