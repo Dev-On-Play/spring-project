@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import CategoryButton from "@/components/main-page/categoryButton"
 import MogakoInfoCard from "../../components/main-page/mogakoCard"
 import cardViewData from "./exampleDatas/cardViewExData.json"
+import fetchMogakosData from "./exampleDatas/fetchMogakoData"
 
 export default function MainPage() {
   const [cards, setCards] = useState<
@@ -21,6 +22,20 @@ export default function MainPage() {
       content: string
     }[]
   >([])
+
+  // Function to fetch all data and log it as an array
+  async function getAllData() {
+    try {
+      const data = await fetchMogakosData()
+      console.log("Fetched data:", data)
+      setCards(data) // Update the state with the fetched data
+    } catch (error) {
+      console.error("Error fetching data:", error)
+    }
+  }
+
+  // Call the function to get all data
+  getAllData()
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
