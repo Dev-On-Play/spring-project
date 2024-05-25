@@ -24,7 +24,7 @@ export default function MainPage() {
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
 
-  // Rest API would be called here
+  // Rest API would be called here by axios
 
   useEffect(() => {
     // Load the data into state
@@ -53,9 +53,7 @@ export default function MainPage() {
       {/* Main Page Part Starts*/}
       {/* <SearchFieldForMainPage /> */}
       {/* Category Selector */}
-
-      {/* Category Buttons -> 추후에는 json 에 카테고리를 추가 + for*/}
-
+      {/* Category Buttons */}
       <div className="flex flex-wrap w-full gap-3 max-w-xl items-start justify-between my-5">
         {uniqueCategories.map((category) => (
           <CategoryButton
@@ -67,19 +65,16 @@ export default function MainPage() {
         ))}
       </div>
       {/* Card Container */}
-
       <div className="flex gap-3 w-full max-w-6xl my-5">
         <div className="container mx-auto p-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* {cards.map((card, index) => (
-              <MogakoInfoCard key={index} {...card} />
-            ))} */}
             {filteredCards.map((card, index) => (
               <MogakoInfoCard key={index} {...card} />
             ))}
           </div>
         </div>
       </div>
+      +
     </>
   )
 }

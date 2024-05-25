@@ -252,6 +252,9 @@ $RECYCLE.BIN/
 
 #### Front
 
+# config file in frontend directory
+/frontend/config/
+
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 .idea
 # dependencies
