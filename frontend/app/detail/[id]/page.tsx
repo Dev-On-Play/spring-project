@@ -2,7 +2,8 @@
 
 import fetchApi from "@/api/fetchApi"
 import { useLoadingStore } from "@/store/store"
-import { useEffect } from "react"
+import moment from "moment"
+import { useCallback, useEffect, useState } from "react"
 import { NextPage } from "next"
 // import { useRouter } from "next/router"
 import { useParams, usePathname, useRouter } from "next/navigation"
@@ -13,8 +14,53 @@ import CardComments from "@/components/card/Comments"
 import CommonAlertDialog from "@/components/common/AlertDialog"
 import CommonButton from "@/components/common/Button"
 
-interface Props {}
+interface MosDetailType {
+  id: number
+  name: string
+  summary: string
+  startDate?: string
+  endDate?: string
+  participantLimit: number
+  participantCount: number
+  minimumParticipantCount: number
+  detailContent: string
+  [key: string]: any
+}
 
+interface Props {}
+export interface MogakosComentType {
+  comments: MogakosComent[]
+  totalPage: number
+  pageNumber: number
+}
+
+export interface MogakosComent {
+  id: number
+  mogako_id: number
+  member: Member
+  childComments: ChildMogakosComments
+  contents: string
+  created_date: string
+}
+
+export interface ChildMogakosComments {
+  childList: ChildMogakosList[]
+}
+
+export interface ChildMogakosList {
+  id: number
+  mogako_id: number
+  member: Member
+  parents_id: number
+  contents: string
+  created_date: string
+}
+
+export interface Member {
+  id: number
+  nickname: string
+  profile: string
+}
 const DetailPage: NextPage<Props> = ({}) => {
   const coments = Array.from({ length: 30 }, () => 0).map((item, idx) => {
     return {
@@ -26,6 +72,7 @@ const DetailPage: NextPage<Props> = ({}) => {
     }
   })
   const [inputVal, onChangeInputVal, setInputVal] = useInput("")
+  const [mosDetailData, setMosDetailData] = useState<MosDetailType>()
   const path = useRouter()
   const params = useParams()
   const { onLoading, offLoading } = useLoadingStore((state) => state)
@@ -37,23 +84,30 @@ const DetailPage: NextPage<Props> = ({}) => {
       console.log("취소")
     }
   }
-  useEffect(() => {
-    const getDetail = async () => {
-      if (params.id) {
+  const getDetail = useCallback(
+    async (mogakoId?: string) => {
+      if (mogakoId) {
         onLoading()
-        await fetchApi(`/mogakos/${params.id}`, {
+        await fetchApi(`/mogakos/${mogakoId}`, {
           method: "get",
         })
           .then((res) => {
             offLoading()
+            console.log("상세조회 결과 : ", res.data)
+            setMosDetailData({ ...res.data })
           })
           .catch((err) => {
             offLoading()
           })
       }
-    }
-    getDetail()
-  }, [params.id, onLoading, offLoading])
+    },
+    [offLoading, onLoading]
+  )
+  // 화면 랜더링 이후 모각코 상세 내역 조회
+  useEffect(() => {
+    getDetail(params.id as string)
+  }, [params.id, onLoading, offLoading, getDetail])
+  const addComment = () => {}
   return (
     <>
       <div className="container max-w-[750px]">
@@ -67,7 +121,9 @@ const DetailPage: NextPage<Props> = ({}) => {
         />
       </div>
       <div className="container flex h-[58px] max-w-[750px] place-content-between items-center">
-        <div className="w-3/5 text-[26px] text-black">타이틀 영역</div>
+        <div className="w-3/5 text-[26px] text-black">
+          {mosDetailData?.name}
+        </div>
         <div>
           <CommonAlertDialog
             callText={"참여"}
@@ -95,16 +151,18 @@ const DetailPage: NextPage<Props> = ({}) => {
           <div className="flex h-[42px] min-w-[150px] flex-wrap content-center items-center justify-center rounded-2xl border border-[#a1a1aa] text-center text-[12px] shadow-md">
             <div>
               <span className="">최소 : </span>
-              <span>N 명 </span>
+              <span>
+                {`${mosDetailData?.minimumParticipantCount ? mosDetailData?.minimumParticipantCount : 0} 명`}{" "}
+              </span>
             </div>
             <div className="ml-2">
               <span>현재 : </span>
-              <span>1 / N</span>
+              <span>{`${mosDetailData?.participantCount} / ${mosDetailData?.participantLimit}`}</span>
             </div>
           </div>
         </div>
         <div className="h-[42px] w-[234px] content-center rounded-2xl border border-solid border-[#a1a1aa80] bg-[#efefef99] text-center shadow-md">
-          <span className="text-[12px] leading-[100%]">날짜 정보</span>
+          <span className="text-[12px] leading-[100%]">{`${moment(mosDetailData?.startDate).format("YYYY.MM.DD HH:mm")} ~ ${moment(mosDetailData?.endDate).format("YYYY.MM.DD HH:mm")}`}</span>
         </div>
       </div>
       <div className="container h-[58px] max-w-[750px]">
@@ -120,7 +178,7 @@ const DetailPage: NextPage<Props> = ({}) => {
         <Textarea
           className="min-h-[326px] resize-none bg-[#efefef99] shadow-md"
           readOnly={true}
-          value={"텍스트 영역"}
+          value={mosDetailData?.detailContent}
         ></Textarea>
       </div>
       <div className="container max-w-[750px]">
@@ -130,6 +188,7 @@ const DetailPage: NextPage<Props> = ({}) => {
             className="h-[56px] shadow-md"
             type="string"
             value={inputVal}
+            onKeyDown={addComment}
             placeholder="댓글을 입력해주세요"
             onChange={onChangeInputVal}
           />
