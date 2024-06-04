@@ -24,4 +24,15 @@ public class SavedFile extends BaseTimeEntity {
 
     private String filename;
     private String url;
+
+    public SavedFile(Mogako mogako, String filename, String url) {
+       this.mogako = mogako;
+       this.filename = filename;
+       this.url = url;
+    }
+
+    public static SavedFile createNewFile(Mogako mogako, String filename, String url)
+    {
+        return new SavedFile(mogako, filename, url);
+    }
 }
