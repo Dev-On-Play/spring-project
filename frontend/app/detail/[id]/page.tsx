@@ -10,7 +10,10 @@ import { useParams, usePathname, useRouter } from "next/navigation"
 import { useInput } from "@/hooks/useInput"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import CardComments from "@/components/card/Comments"
+import CardComments, {
+  MogakosComment,
+  MogakosCommentType,
+} from "@/components/card/Comments"
 import CommonAlertDialog from "@/components/common/AlertDialog"
 import CommonButton from "@/components/common/Button"
 
@@ -28,54 +31,47 @@ interface MosDetailType {
 }
 
 interface Props {}
-export interface MogakosComentType {
-  comments: MogakosComent[]
-  totalPage: number
-  pageNumber: number
-}
 
-export interface MogakosComent {
-  id: number
-  mogako_id: number
-  member: Member
-  childComments: ChildMogakosComments
-  contents: string
-  created_date: string
-}
-
-export interface ChildMogakosComments {
-  childList: ChildMogakosList[]
-}
-
-export interface ChildMogakosList {
-  id: number
-  mogako_id: number
-  member: Member
-  parents_id: number
-  contents: string
-  created_date: string
-}
-
-export interface Member {
-  id: number
-  nickname: string
-  profile: string
-}
 const DetailPage: NextPage<Props> = ({}) => {
-  const coments = Array.from({ length: 30 }, () => 0).map((item, idx) => {
-    return {
-      comentId: "코멘트 아이디 정보",
-      contents: `댓글 영역입니다 ${idx + 1}`,
-      profile: "https://github.com/shadcn.png",
-      nickName: `닉네임${idx + 1}`,
-      createDate: `2024-04-${idx + 1} 00:00:00`,
+  const coments = Array.from({ length: 30 }, () => 0).map(
+    (item, idx): MogakosComment => {
+      return {
+        mogako_id: 1, //모각코아이디
+        id: 0,
+        contents: `댓글 영역입니다 ${idx + 1}`,
+        member: {
+          id: 0,
+          profile: "https://github.com/shadcn.png",
+          nickname: `닉네임${idx + 1}`,
+        },
+        created_date: `2024-04-${idx + 1} 00:00:00`,
+        childComments: {
+          childList: [
+            {
+              id: 0,
+              mogako_id: 1,
+              member: {
+                id: 0,
+                profile: "https://github.com/shadcn.png",
+                nickname: `닉네임${idx + 1}`,
+              },
+              parents_id: 1,
+              contents: "대댓글 내용입니다",
+              created_date: `2024-04-${idx + 1} 00:00:00`,
+            },
+          ],
+        },
+      }
     }
-  })
+  )
+
   const [inputVal, onChangeInputVal, setInputVal] = useInput("")
   const [mosDetailData, setMosDetailData] = useState<MosDetailType>()
+  const [mosComment, setMosComment] = useState<MogakosCommentType>()
   const path = useRouter()
   const params = useParams()
   const { onLoading, offLoading } = useLoadingStore((state) => state)
+
   const onParticipate = (Yn: boolean) => {
     if (Yn) {
       //참여시키기
@@ -91,10 +87,11 @@ const DetailPage: NextPage<Props> = ({}) => {
         await fetchApi(`/mogakos/${mogakoId}`, {
           method: "get",
         })
-          .then((res) => {
-            offLoading()
+          .then(async (res) => {
             console.log("상세조회 결과 : ", res.data)
+            await getComment(mogakoId)
             setMosDetailData({ ...res.data })
+            offLoading()
           })
           .catch((err) => {
             offLoading()
@@ -103,11 +100,39 @@ const DetailPage: NextPage<Props> = ({}) => {
     },
     [offLoading, onLoading]
   )
+  const getComment = async (mogakoId: string) => {
+    await fetchApi(`/mogakos/${mogakoId}/comments`, {
+      method: "get",
+    })
+      .then((res) => {
+        setMosComment({ ...res.data })
+      })
+      .catch((err) => {
+        offLoading()
+      })
+  }
   // 화면 랜더링 이후 모각코 상세 내역 조회
   useEffect(() => {
     getDetail(params.id as string)
   }, [params.id, onLoading, offLoading, getDetail])
-  const addComment = () => {}
+  const addComment = async (e: any) => {
+    if (e.code === "Enter") {
+      onLoading()
+      await fetchApi(`/mogakos/${params.id}/comments/create`, {
+        method: "post",
+        data: {
+          mogako_id: params.id,
+          member_id: 0, // 로그인 계정확인
+          parent_id: params.id, // ??? 새댓글일때는 부모 아이디가 없음
+          contents: inputVal,
+        },
+      })
+        .then(async (res) => {
+          await getDetail(params.id as string)
+        })
+        .catch((err) => {})
+    }
+  }
   return (
     <>
       <div className="container max-w-[750px]">
@@ -194,19 +219,21 @@ const DetailPage: NextPage<Props> = ({}) => {
           />
         </div>
         <br />
-        {coments.map((item, idx) => {
-          return (
-            <CardComments
-              key={idx}
-              comentId={item.comentId}
-              contents={item.contents}
-              profile={item.profile}
-              nickName={item.nickName}
-              createDate={item.createDate}
-              childComment={idx % 2 === 0 ? [coments[idx]] : []}
-            />
-          )
-        })}
+        {mosComment?.comments && mosComment.comments.length > 0 ? (
+          mosComment?.comments.map((item, idx) => {
+            return (
+              <CardComments
+                key={idx}
+                mogakosComment={item}
+                // childComment={idx % 2 === 0 ? [coments[idx]] : []}
+              />
+            )
+          })
+        ) : (
+          <div className="container max-w-[750px] text-center min-h-96">
+            댓글이 없습니다
+          </div>
+        )}
       </div>
     </>
   )

@@ -19,26 +19,26 @@ import java.util.ArrayList;
 @Tag(name = "댓글 관련 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/mogakos/{mogako_id}/comments")
+@RequestMapping(value = "/api/mogakos/{mogako_id}")
 public class CommentController {
 
     private final CommentService commentService;
 
     @Operation(summary = "모각코 상세 페이지>댓글 전체 조회")
-    @GetMapping("/")
+    @GetMapping("/comments")
     public ResponseEntity<CommentsResponse> findComments(@PathVariable Long mogako_id, Pageable pageable) throws Exception {
         CommentsResponse commentsResponse = commentService.findAllByMogakoId(mogako_id,pageable);
         return ResponseEntity.ok(commentsResponse);
     }
     @Operation(summary = "모각코 상세 페이지>댓글 생성")
-    @PostMapping("/create")
+    @PostMapping("/comments/create")
     public ResponseEntity<Long> createComment(@PathVariable Long mogako_id, @RequestBody CreateCommentRequest request){
         Long createCommentId = commentService.createComent(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(createCommentId);
     }
 
     @Operation(summary = "모각코 상세 페이지>대댓글 생성")
-    @PostMapping("/create/{parents_id}")
+    @PostMapping("/comments/create/{parents_id}")
     public ResponseEntity<Long> createChildComment(@PathVariable Long mogako_id, @PathVariable String parents_id, @RequestBody CreateCommentRequest request){
         Long createCommentId = commentService.createComent(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(createCommentId);
