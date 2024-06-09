@@ -5,6 +5,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
+import mos.category.entity.Category;
 import mos.mogako.dto.CreateMogakoRequest;
 import mos.mogako.dto.MogakoResponse;
 import mos.mogako.dto.MogakosResponse;
@@ -32,15 +33,22 @@ class MogakoServiceTest {
     @Autowired
     private EntityManager entityManager;
 
+    private Category category1;
+    private Category category2;
     private Mogako mogako1;
 
     @BeforeEach
     void setUp() {
-        mogako1 = Mogako.createNewMogako("모각코 이름", "모각코 짧은 소개",
+        category1 = Category.createCategory("카테고리 이름1");
+        category2 = Category.createCategory("카테고리 이름2");
+
+        mogako1 = Mogako.createNewMogako("모각코 이름", "모각코 짧은 소개", category1,
                 LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
                 8, 2,
                 "모각코 상세설명");
 
+        entityManager.persist(category1);
+        entityManager.persist(category2);
         entityManager.persist(mogako1);
 
         entityManager.flush();
@@ -50,9 +58,7 @@ class MogakoServiceTest {
     @Test
     void 신규_모각코를_생성한다() {
         // given
-        Long categoryId = 1L;
-        CreateMogakoRequest request = new CreateMogakoRequest(categoryId,
-                "모각코 이름", "모각코 짧은 소개",
+        CreateMogakoRequest request = new CreateMogakoRequest("모각코 이름", "모각코 짧은 소개", category1.getId(),
                 LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
                 8, 2,
                 "모각코 상세설명");
@@ -79,7 +85,7 @@ class MogakoServiceTest {
     @Test
     void 단일_모각코의_정보를_수정할_수_있다() {
         // given
-        Long updatedCategoryId = 2L;
+        Long updatedCategoryId = category2.getId();
         String updatedName = "모각코 이름 수정";
         String updatedSummary = "모각코 짧은 소개 수정";
         LocalDateTime updatedStartDate = LocalDateTime.now().plusDays(2L);
@@ -103,6 +109,7 @@ class MogakoServiceTest {
         Mogako updatedMogako = entityManager.find(Mogako.class, updatedMogakoId);
 
         assertSoftly((softly) -> {
+            softly.assertThat(updatedMogako.getCategory().getId()).isEqualTo(category2.getId());
             softly.assertThat(updatedMogako.getName()).isEqualTo(updatedName);
             softly.assertThat(updatedMogako.getSummary()).isEqualTo(updatedSummary);
             softly.assertThat(updatedMogako.getStartDate()).isEqualTo(updatedStartDate);
@@ -121,7 +128,7 @@ class MogakoServiceTest {
         int totalElements = 10;
 
         for (int i = 1; i < totalElements; i++) {
-            entityManager.persist(Mogako.createNewMogako("모각코 이름" + i, "모각코 짧은 소개",
+            entityManager.persist(Mogako.createNewMogako("모각코 이름" + i, "모각코 짧은 소개", category1,
                     LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
                     8, 2,
                     "모각코 상세설명"));
