@@ -17,4 +17,12 @@ public class Category {
     private Long id;
 
     private String name;
+
+    private Category(String name) {
+        this.name = name;
+    }
+
+    public static Category createCategory(String name) {
+        return new Category(name);
+    }
 }
