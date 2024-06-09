@@ -2,9 +2,11 @@ package mos.category.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import mos.category.dto.CategoriesResponse;
 import mos.category.dto.CreateCategoryRequest;
 import mos.category.service.CategoryService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,4 +26,9 @@ public class CategoryController {
         return ResponseEntity.created(URI.create("api/categories/" + createdCategoryId)).build();
     }
 
+    @Operation(summary = "전체 카테고리 조회")
+    @GetMapping("/api/categories")
+    public ResponseEntity<CategoriesResponse> findCategories() {
+        return ResponseEntity.ok(categoryService.findAll());
+    }
 }

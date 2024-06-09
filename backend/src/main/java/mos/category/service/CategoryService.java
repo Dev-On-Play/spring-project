@@ -2,10 +2,13 @@ package mos.category.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import mos.category.dto.CategoriesResponse;
 import mos.category.dto.CreateCategoryRequest;
 import mos.category.entity.Category;
 import mos.category.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -18,5 +21,10 @@ public class CategoryService {
         Category category = Category.createCategory(request.name());
         categoryRepository.save(category);
         return category.getId();
+    }
+
+    public CategoriesResponse findAll() {
+        List<Category> categories = categoryRepository.findAll();
+        return CategoriesResponse.from(categories);
     }
 }
