@@ -1,14 +1,14 @@
 package mos.contents.entity;
 
 import jakarta.persistence.*;
-
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import mos.common.BaseTimeEntity;
 import mos.member.entity.Member;
 import mos.mogako.entity.Mogako;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -29,7 +29,7 @@ public class Comment extends BaseTimeEntity {
     private Comment parent;
 
     @OneToMany(mappedBy = "parent")
-    private List<Comment> comments = new ArrayList<>();
+    private final List<Comment> comments = new ArrayList<>();
 
     private String contents;
 
@@ -47,11 +47,11 @@ public class Comment extends BaseTimeEntity {
         this.contents = contents;
     }
 
-    public static Comment createNewChildComment(Mogako mogako, Member member, Comment parent, String contents){
-        return new Comment(mogako,member,parent,contents);
+    public static Comment createNewChildComment(Mogako mogako, Member member, Comment parent, String contents) {
+        return new Comment(mogako, member, parent, contents);
     }
 
-    public static Comment createNewComment(Mogako mogako, Member member,String contents){
+    public static Comment createNewComment(Mogako mogako, Member member, String contents) {
         return new Comment(mogako, member, contents);
     }
 }
