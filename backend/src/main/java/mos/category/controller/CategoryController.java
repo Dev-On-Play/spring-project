@@ -1,6 +1,7 @@
 package mos.category.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import mos.category.dto.CategoriesResponse;
 import mos.category.dto.CreateCategoryRequest;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 
+@Tag(name = "카테고리 관련 API")
 @RestController
 @RequiredArgsConstructor
 public class CategoryController {
