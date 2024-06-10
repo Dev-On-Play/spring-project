@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 public class MosApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MosApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MosApplication.class, args);
+    }
 }

@@ -1,10 +1,6 @@
 package mos.contents.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import mos.common.BaseTimeEntity;
@@ -26,13 +22,12 @@ public class SavedFile extends BaseTimeEntity {
     private String url;
 
     public SavedFile(Mogako mogako, String filename, String url) {
-       this.mogako = mogako;
-       this.filename = filename;
-       this.url = url;
+        this.mogako = mogako;
+        this.filename = filename;
+        this.url = url;
     }
 
-    public static SavedFile createNewFile(Mogako mogako, String filename, String url)
-    {
+    public static SavedFile createNewFile(Mogako mogako, String filename, String url) {
         return new SavedFile(mogako, filename, url);
     }
 }

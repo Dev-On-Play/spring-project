@@ -24,8 +24,8 @@ public class MogakoController {
 
     @Operation(summary = "전체 모각코 목록 조회")
     @GetMapping("/api/mogakos")
-    public MogakosResponse findMogakos(Pageable pageable) {
-        return mogakoService.findAll(pageable);
+    public ResponseEntity<MogakosResponse> findMogakos(Pageable pageable) {
+        return ResponseEntity.ok(mogakoService.findAll(pageable));
     }
 
     @Operation(summary = "단일 모각코 상세정보 조회")

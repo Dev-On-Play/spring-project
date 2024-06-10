@@ -24,29 +24,29 @@ public class FIleService {
     @Autowired
     protected MogakoRepository mogakoRepository;
 
-    public FileResponse findFile(Long id){
+    public FileResponse findFile(Long id) {
         SavedFile savedFile = fileRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 File id 입니다."));
         return FileResponse.from(savedFile);
     }
 
-    public FilesResponse findFilesByMogakoId(Long mogako_id, Pageable pageable){
+    public FilesResponse findFilesByMogakoId(Long mogako_id, Pageable pageable) {
         Mogako mogako = mogakoRepository.getReferenceById(mogako_id);
         Page<SavedFile> files = fileRepository.findAllByMogako(mogako, pageable);
         return FilesResponse.from(files);
     }
 
-    public Long CreateFile(CreateFileRequest request, MultipartFile multipartFile){
+    public Long CreateFile(CreateFileRequest request, MultipartFile multipartFile) {
         Mogako mogako = mogakoRepository.getReferenceById(request.mogako_id());
         String url = null;
 
         url = uploadFile(multipartFile);
 
-        SavedFile savedFile = SavedFile.createNewFile(mogako,request.fileName(),url);
+        SavedFile savedFile = SavedFile.createNewFile(mogako, request.fileName(), url);
         return savedFile.getId();
     }
 
-    public String uploadFile(MultipartFile multipartFile){
+    public String uploadFile(MultipartFile multipartFile) {
         //TODO: 파일 저장소 저장 방식 결정 필요
         return "fileurl";
     }
