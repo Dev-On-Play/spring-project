@@ -6,6 +6,7 @@ import mos.contents.dto.CreateCommentRequest;
 import mos.contents.entity.Comment;
 import mos.contents.repository.CommentRepository;
 import mos.member.entity.Member;
+import mos.member.repository.MemberRepository;
 import mos.mogako.entity.Mogako;
 import mos.mogako.repository.MogakoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,8 @@ public class CommentService {
     protected CommentRepository commentRepository;
     @Autowired
     protected MogakoRepository mogakoRepository;
-    //TODO:memberRepository 완성되면  추가
+    @Autowired
+    protected MemberRepository memberRepository;
 
     public CommentsResponse findAllByMogakoId(Long mogako_id, Pageable pageable) throws Exception {
         Mogako mogako = mogakoRepository.getReferenceById(mogako_id);
@@ -32,18 +34,21 @@ public class CommentService {
 
     public Long createComent(CreateCommentRequest request) {
         Comment comment = null;
+        Comment createdComment = null;
 
         Mogako mogako = mogakoRepository.getReferenceById(request.mogako_id());
-        Member member = null;//TODO:member Repository 완성 수 getReperenceById 추가
+        Member member = memberRepository.getReferenceById(request.member_id());
 
         if (request.parent_id() == 0L) { //0depth댓글이면
             comment = Comment.createNewComment(mogako, member, request.contents());
+            createdComment = commentRepository.save(comment);
         } else {
             Comment parents = commentRepository.getReferenceById(request.parent_id());
             comment = Comment.createNewChildComment(mogako, member, parents, request.contents());
+            createdComment = commentRepository.save(comment);
         }
 
-        return comment.getId();
+        return createdComment.getId();
 
 
     }
