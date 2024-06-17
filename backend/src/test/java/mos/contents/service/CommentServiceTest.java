@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
+import mos.category.entity.Category;
 import mos.contents.dto.CommentsResponse;
 import mos.contents.dto.CreateCommentRequest;
 import mos.contents.entity.Comment;
@@ -16,7 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 
-@Disabled("테스트 코드 미완성으로 인한 임시 비활성화")
+import java.time.LocalDateTime;
+
+//@Disabled("테스트 코드 미완성으로 인한 임시 비활성화")
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @Transactional
@@ -31,14 +34,21 @@ class CommentServiceTest {
 
     Mogako mogako;
     Member member;
+    Category category;
     private Comment pComment;
 
     @BeforeEach
     void setup() {
-        mogako = mock(Mogako.class);
-        member = mock(Member.class);
+        category = Category.createCategory("category1");
+        mogako = Mogako.createNewMogako("samplemogakp","summary", category,
+                LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
+                8, 2,
+                "detailcontent");
+        member = Member.createNewMember("nick","aaa@aaa.aaa","intro","profileurl",36.5);
         pComment = Comment.createNewComment(mogako, member, "댓글 테스트");
-
+        entityManager.persist(category);
+        entityManager.persist(mogako);
+        entityManager.persist(member);
         entityManager.persist(pComment);
         entityManager.flush();
         entityManager.clear();
@@ -58,7 +68,7 @@ class CommentServiceTest {
     void 대댓글_생성() {
         //TODO:member entity 완성 이후 service 수정하여 다시 테스트 예정
         //given
-        CreateCommentRequest request = new CreateCommentRequest(1L, 1L, pComment.getId(), "신규 대댓글 생성");
+        CreateCommentRequest request = new CreateCommentRequest(mogako.getId(), member.getId(), pComment.getId(), "신규 대댓글 생성");
         //when
         Long result = commentService.createComent(request);
         //then

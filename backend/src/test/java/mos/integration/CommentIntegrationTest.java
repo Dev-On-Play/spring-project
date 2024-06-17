@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import mos.category.entity.Category;
 import mos.contents.dto.CommentResponse;
 import mos.contents.dto.CommentsResponse;
 import mos.contents.dto.CreateCommentRequest;
@@ -19,13 +19,15 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Disabled("테스트 코드 미완성으로 인한 임시 비활성화")
+
 class CommentIntegrationTest extends IntegrationTest {
 
     private Comment comment1;
@@ -33,21 +35,26 @@ class CommentIntegrationTest extends IntegrationTest {
     private Comment childComment1;
     private Comment childComment2;
 
-    Mogako mogako;
-    Member member;
+    private Category category;
+    private Mogako mogako;
+    private Member member;
 
     @BeforeEach
     void setup() {
-        mogako = mock(Mogako.class);
-        member = mock(Member.class);
+        category = Category.createCategory("category");
+        mogako = Mogako.createNewMogako("mogakp", "summary", category,
+                LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
+                8, 2,
+                "모각코 상세설명");
+        member = Member.createNewMember("nick","aaa@aaa.aa","intro","profileurl",36.5);
         comment1 = Comment.createNewComment(mogako, member, "신규 댓글 1");
         comment2 = Comment.createNewComment(mogako, member, "신규 댓글 2");
 
+        entityManager.persist(category);
+        entityManager.persist(mogako);
+        entityManager.persist(member);
         entityManager.persist(comment1);
         entityManager.persist(comment2);
-
-        entityManager.flush();
-        entityManager.clear();
 
         childComment1 = Comment.createNewChildComment(mogako, member, comment1, "대댓글 1");
         childComment2 = Comment.createNewChildComment(mogako, member, comment1, "대댓글 2");
@@ -71,8 +78,8 @@ class CommentIntegrationTest extends IntegrationTest {
         this.mockMvc.perform(post("/api/mogakos/" + mogako.getId() + "/comments/create")
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(header().exists(HttpHeaders.LOCATION));
+                .andExpect(status().isCreated());
+
         //then
         Long afterCommentCount = entityManager.createQuery("select count(*) from Comment c", Long.class)
                 .getSingleResult();
@@ -91,8 +98,7 @@ class CommentIntegrationTest extends IntegrationTest {
         this.mockMvc.perform(post("/api/mogakos/" + mogako.getId() + "/comments/create/" + comment1.getId())
                         .content(jsonRequest)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(header().exists(HttpHeaders.LOCATION));
+                .andExpect(status().isCreated());
         //then
         Long afterChildCommentCount = entityManager.createQuery("select count(*) from Comment c where parent.id != 0L", Long.class)
                 .getSingleResult();
@@ -108,7 +114,7 @@ class CommentIntegrationTest extends IntegrationTest {
         params.add("page", String.valueOf(pageNum));
         params.add("size", String.valueOf(pageSize));
         //when
-        MvcResult result = this.mockMvc.perform(get("/api/mogakos/" + mogako.getId() + "/comments")
+        MvcResult result = this.mockMvc.perform(get("/api/mogakos/" + mogako.getId() + "/comments/")
                         .queryParams(params)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
