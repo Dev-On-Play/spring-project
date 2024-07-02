@@ -2,7 +2,6 @@ package mos.contents.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.Mockito.mock;
 
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -12,7 +11,10 @@ import mos.contents.dto.CreateCommentRequest;
 import mos.contents.entity.Comment;
 import mos.member.entity.Member;
 import mos.mogako.entity.Mogako;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
@@ -40,11 +42,11 @@ class CommentServiceTest {
     @BeforeEach
     void setup() {
         category = Category.createCategory("category1");
-        mogako = Mogako.createNewMogako("samplemogakp","summary", category,
+        mogako = Mogako.createNewMogako("samplemogakp", "summary", category,
                 LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
                 8, 2,
                 "detailcontent");
-        member = Member.createNewMember("nick","aaa@aaa.aaa","intro","profileurl",36.5);
+        member = Member.createNewMember("nick", "aaa@aaa.aaa", "profileurl");
         pComment = Comment.createNewComment(mogako, member, "댓글 테스트");
         entityManager.persist(category);
         entityManager.persist(mogako);

@@ -18,8 +18,8 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    private final Member dummyMember = Member.createNewMember("닉네임1", "test1@gmail.com", "소개글1",
-            "프로필url1", 36.5);
+    private final Member dummyMember = Member.createNewMember("닉네임1",
+            "test1@gmail.com", "프로필url1");
 
     @Operation(summary = "단일 멤버정보 조회")
     @GetMapping("/api/members/{memberId}")
