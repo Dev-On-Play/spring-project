@@ -12,6 +12,8 @@ import mos.member.entity.Member;
 import mos.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -38,11 +40,35 @@ public class AuthTransactionalService {
 
     private TokenResponse publishAccessAndRefreshToken(Member member) {
         // jwt accessToken, refreshToken 신규 발급 후 반환
-        String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(member.getId()), tokenValues.accessTokenExpireLength(),
-                tokenValues.secretKey());
-        RefreshToken refreshToken = RefreshToken.of(member, tokenValues.refreshTokenExpireLength());
+        String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(member.getId()),
+                tokenValues.accessTokenExpireLength(), tokenValues.secretKey());
+        RefreshToken refreshToken = refreshTokenRepository.findByMember(member)
+                .orElseGet(() -> RefreshToken.of(member, tokenValues.refreshTokenExpireLength()));
+
+        while (refreshTokenRepository.existsByUuid(refreshToken.getUuid())) {
+            refreshToken.updateUuidAndExpireDateTime(tokenValues.refreshTokenExpireLength());
+        }
         refreshTokenRepository.save(refreshToken);
 
         return TokenResponse.of(accessToken, refreshToken);
+    }
+
+    public TokenResponse republishAccessAndRefreshToken(String inputRefreshToken) {
+        // jwt accessToken, refreshToken 재발급 후 반환
+        RefreshToken refreshToken = refreshTokenRepository.findByUuid(UUID.fromString(inputRefreshToken))
+                .orElseThrow(IllegalArgumentException::new);    // todo : InvalidRefreshTokenException
+        refreshToken.validateExpired();
+        refreshToken.updateUuidAndExpireDateTime(tokenValues.refreshTokenExpireLength());
+
+        String accessToken = jwtTokenProvider.createAccessToken(String.valueOf(refreshToken.getMember().getId()),
+                tokenValues.accessTokenExpireLength(), tokenValues.secretKey());
+
+        return TokenResponse.of(accessToken, refreshToken);
+    }
+
+    public void deleteRefreshToken(String inputRefreshToken) {
+        RefreshToken refreshToken = refreshTokenRepository.findByUuid(UUID.fromString(inputRefreshToken))
+                .orElseThrow(IllegalArgumentException::new);// todo : InvalidLogoutRequestException
+        refreshTokenRepository.delete(refreshToken);
     }
 }

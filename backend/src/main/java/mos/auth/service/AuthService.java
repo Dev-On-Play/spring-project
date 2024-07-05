@@ -26,4 +26,12 @@ public class AuthService {
         // 사용자 프로필 정보를 이용해서 로그인 프로세스 진행 후 access, refresh Token 발급
         return authTransactionalService.userLogin(profileResponse);
     }
+
+    public TokenResponse refresh(String refreshToken) {
+        return authTransactionalService.republishAccessAndRefreshToken(refreshToken);
+    }
+
+    public void oauthLogout(String refreshToken) {
+        authTransactionalService.deleteRefreshToken(refreshToken);
+    }
 }
