@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import mos.common.BaseTimeEntity;
+import mos.common.entity.BaseTimeEntity;
 import mos.member.entity.Member;
 
 import java.time.LocalDateTime;

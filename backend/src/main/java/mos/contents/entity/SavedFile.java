@@ -3,7 +3,7 @@ package mos.contents.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import mos.common.BaseTimeEntity;
+import mos.common.entity.BaseTimeEntity;
 import mos.mogako.entity.Mogako;
 
 @Entity

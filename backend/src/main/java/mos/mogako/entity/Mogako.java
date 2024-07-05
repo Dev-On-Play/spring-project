@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import mos.category.entity.Category;
-import mos.common.BaseTimeEntity;
+import mos.common.entity.BaseTimeEntity;
 import mos.hashtag.entity.MogakoHashtag;
 
 import java.time.LocalDateTime;

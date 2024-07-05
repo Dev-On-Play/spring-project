@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import mos.common.BaseTimeEntity;
+import mos.common.entity.BaseTimeEntity;
 
 @Entity
 @Getter
