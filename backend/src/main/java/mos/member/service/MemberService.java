@@ -3,6 +3,7 @@ package mos.member.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import mos.member.dto.MemberResponse;
+import mos.member.dto.UpdateMemberRequest;
 import mos.member.entity.Member;
 import mos.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
@@ -18,5 +19,13 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 멤버 Id 입니다."));
         return MemberResponse.from(member);
+    }
+
+    public Long updateMember(Long memberId, UpdateMemberRequest request) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 멤버 Id 입니다."));
+
+        member.update(request.nickname(), request.introduction(), request.profile());
+        return member.getId();
     }
 }

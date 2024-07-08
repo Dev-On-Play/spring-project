@@ -26,17 +26,12 @@ class MemberServiceTest {
     private EntityManager entityManager;
 
     private Member member1;
-    private Member member2;
 
     @BeforeEach
     void setUp() {
-        member1 = Member.createNewMember("닉네임1", "test1@gmail.com",
-                "소개글1", "프로필url1", 36.5);
-        member2 = Member.createNewMember("닉네임2", "test2@gmail.com",
-                "소개글2", "프로필url2", 40.0);
+        member1 = Member.createNewMember("닉네임1", "test1@gmail.com", "프로필url1");
 
         entityManager.persist(member1);
-        entityManager.persist(member2);
 
         entityManager.flush();
         entityManager.clear();

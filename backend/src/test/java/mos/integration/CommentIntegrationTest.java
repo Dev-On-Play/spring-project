@@ -1,10 +1,9 @@
 package mos.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import mos.category.entity.Category;
 import mos.contents.dto.CommentResponse;
@@ -15,11 +14,8 @@ import mos.member.entity.Member;
 import mos.mogako.entity.Mogako;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.util.LinkedMultiValueMap;
 
@@ -46,7 +42,7 @@ class CommentIntegrationTest extends IntegrationTest {
                 LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
                 8, 2,
                 "모각코 상세설명");
-        member = Member.createNewMember("nick","aaa@aaa.aa","intro","profileurl",36.5);
+        member = Member.createNewMember("nick", "aaa@aaa.aa", "profileurl");
         comment1 = Comment.createNewComment(mogako, member, "신규 댓글 1");
         comment2 = Comment.createNewComment(mogako, member, "신규 댓글 2");
 
