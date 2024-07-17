@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class FIleService {
+public class FileService {
     @Autowired
     protected FileRepository fileRepository;
     @Autowired
@@ -37,12 +37,14 @@ public class FIleService {
     }
 
     public Long CreateFile(CreateFileRequest request, MultipartFile multipartFile) {
+        SavedFile createdFile = null;
         Mogako mogako = mogakoRepository.getReferenceById(request.mogako_id());
         String url = null;
 
         url = uploadFile(multipartFile);
 
         SavedFile savedFile = SavedFile.createNewFile(mogako, request.fileName(), url);
+        createdFile = fileRepository.save(savedFile);
         return savedFile.getId();
     }
 

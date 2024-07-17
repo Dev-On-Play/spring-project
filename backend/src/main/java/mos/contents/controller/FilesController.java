@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import mos.contents.dto.CreateFileRequest;
 import mos.contents.dto.FileResponse;
 import mos.contents.dto.FilesResponse;
-import mos.contents.service.FIleService;
+import mos.contents.service.FileService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +25,7 @@ import java.net.URI;
 @RequestMapping({"/api/mogakos/{mogako_id}/files"})
 public class FilesController {
 
-    private final FIleService fIleService;
+    private final FileService fIleService;
 
     @Operation(summary = "파일 리스트 조회")
     @GetMapping("/")
@@ -43,7 +43,7 @@ public class FilesController {
 
     @Operation(summary = "파일 업로드")
     @PostMapping("/upload")
-    public ResponseEntity<Long> uploadFile(@PathVariable Long mogako_id, @RequestBody MultipartFile multipartFile, @RequestBody CreateFileRequest createFileRequest) {
+    public ResponseEntity<Long> uploadFile(@PathVariable Long mogako_id, @RequestPart MultipartFile multipartFile, @RequestPart CreateFileRequest createFileRequest) {
         Long createdFileId = fIleService.CreateFile(createFileRequest, multipartFile);
         return ResponseEntity.created(URI.create("api/mogakos/" + mogako_id + "/files/" + createdFileId)).build();
     }
