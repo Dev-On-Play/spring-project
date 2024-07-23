@@ -1,3 +1,4 @@
+import { getItem } from "@/store/localStorage"
 import axios, { Method } from "axios"
 
 export const instance = axios.create({
@@ -36,7 +37,8 @@ const fetchApi = async (
     data?: { [key: string]: any }
     params?: any
     headers?: any
-  }
+  },
+  etc?: { isAuth: boolean }
 ) => {
   const headers = opts.headers
     ? { ...opts.headers }
@@ -46,7 +48,12 @@ const fetchApi = async (
     url: apiUrl,
     data: opts.data,
     params: opts.params,
-    headers: headers,
+    headers: etc?.isAuth
+      ? {
+          ...headers,
+          Authorization: `Bearer ${getItem({ key: "accessToken" })}`,
+        }
+      : headers,
   })
     .then((res) => {
       return { ...res }
