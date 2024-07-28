@@ -2,6 +2,8 @@ package mos.mogako.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import mos.category.entity.Category;
+import mos.category.repository.CategoryRepository;
 import mos.mogako.dto.CreateMogakoRequest;
 import mos.mogako.dto.MogakoResponse;
 import mos.mogako.dto.MogakosResponse;
@@ -18,9 +20,13 @@ import org.springframework.stereotype.Service;
 public class MogakoService {
 
     private final MogakoRepository mogakoRepository;
+    private final CategoryRepository categoryRepository;
 
     public Long createMogako(CreateMogakoRequest request) {
-        Mogako createdMogako = Mogako.createNewMogako(request.name(), request.summary(),
+        Category category = categoryRepository.findById(request.categoryId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리 id 입니다."));
+
+        Mogako createdMogako = Mogako.createNewMogako(request.name(), request.summary(), category,
                 request.startDate(), request.endDate(),
                 request.participantLimit(), request.minimumParticipantCount(),
                 request.detailContent());
@@ -40,8 +46,11 @@ public class MogakoService {
         // todo : controllerAdvice 예외상황 처리 및 예외 정의
         Mogako mogako = mogakoRepository.findById(mogakoId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 모각코 id 입니다."));
-        mogako.update(request.categoryId(),
-                request.name(), request.summary(),
+        // todo : 카테고리의 변경이 없으면 db 조회 안하는 방향으로 리팩토링
+        Category category = categoryRepository.findById(request.categoryId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리 id 입니다."));
+
+        mogako.update(request.name(), request.summary(), category,
                 request.startDate(), request.endDate(),
                 request.participantLimit(), request.minimumParticipantCount(),
                 request.detailContent());

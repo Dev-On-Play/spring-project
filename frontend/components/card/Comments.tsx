@@ -8,24 +8,51 @@ import CommonButton from "@/components/common/Button"
 import ArrowIcon from "../icons/ArrowIcon"
 import { Input } from "../ui/input"
 
-interface CommentType {
-  contents: string
-  profile?: string
-  nickName?: string
-  createDate?: string | Date
+export interface MogakosCommentType {
+  comments: MogakosComment[]
+  totalPage: number
+  pageNumber: number
 }
-interface Props extends CommentType {
+
+export interface MogakosComment {
+  id: number
+  mogako_id: number
+  member: Member
+  childComments?: ChildMogakosComments
+  contents: string
+  parents_id?: number
+  created_date: string
+}
+
+export interface ChildMogakosComments {
+  childList?: ChildMogakosList[]
+}
+
+export interface ChildMogakosList {
+  id: number
+  mogako_id: number
+  member: Member
+  parents_id: number
+  contents: string
+  created_date: string
+}
+
+export interface Member {
+  id: number
+  nickname: string
+  profile: string
+}
+
+interface Props {
+  mogakosComment: MogakosComment
   className?: string
-  childComment?: CommentType[]
+  // childComment?: CommentType[]
   comentId?: string
 }
 
 const CardComments: NextPage<Props> = ({
-  contents,
-  profile = "https://github.com/shadcn.png",
-  nickName,
-  createDate,
-  childComment,
+  mogakosComment,
+  // childComment,
   className,
 }) => {
   const [inputVal, onChangeInputVal, setInputVal] = useInput("")
@@ -47,16 +74,21 @@ const CardComments: NextPage<Props> = ({
     <div className={`${className ? className : ""} py-2`}>
       <div className="relative flex min-h-[80px] items-center rounded-2xl border border-solid border-[#a1a1aa80] shadow-md">
         <div className="ml-2 mr-4 flex flex-col items-center justify-center">
-          <CommonAvatar imgSrc={profile} alt={nickName} fallback={nickName} />
-          <div>{nickName}</div>
+          <CommonAvatar
+            imgSrc={mogakosComment.member.profile}
+            alt={mogakosComment.member.nickname}
+            fallback={mogakosComment.member.nickname}
+          />
+          <div>{mogakosComment.member.nickname}</div>
         </div>
-        <div className="grow">{contents}</div>
+        <div className="grow">{mogakosComment.contents}</div>
         {/* {childComment?.length ? <div>버튼</div> : <></>} */}
         <div className="absolute bottom-0 right-2">
-          {createDate?.toString()}
+          {mogakosComment.created_date?.toString()}
         </div>
         {/* 댓글이 달려있지 않을 경우에만  */}
-        {(childComment && childComment?.length > 0) ||
+        {(mogakosComment.childComments?.childList &&
+          mogakosComment.childComments.childList?.length > 0) ||
         className?.includes("childComment") ? (
           <></>
         ) : (
@@ -78,10 +110,11 @@ const CardComments: NextPage<Props> = ({
             <ArrowIcon />
             <div className="relative flex min-h-[80px] items-center rounded-2xl border border-solid border-[#a1a1aa80] shadow-md">
               <div className="ml-2 mr-4 flex flex-col items-center justify-center">
+                {/* 현재 로그인한 계정정보를 받아서 보여줘야함 */}
                 <CommonAvatar
-                  imgSrc={profile}
-                  alt={nickName}
-                  fallback={nickName}
+                  imgSrc={mogakosComment.member.profile}
+                  alt={mogakosComment.member.nickname}
+                  fallback={mogakosComment.member.nickname}
                 />
                 <div>댓글 닉네임</div>
               </div>
@@ -118,17 +151,15 @@ const CardComments: NextPage<Props> = ({
         </div>
       ) : null}
       {/* 댓글이 달려있지 않을 경우에 버튼 노출 */}
-      {childComment && childComment.length > 0 ? (
-        childComment.map((item, idx) => {
+      {mogakosComment.childComments?.childList &&
+      mogakosComment.childComments.childList.length > 0 ? (
+        mogakosComment.childComments.childList.map((item, idx) => {
           return (
             <div className="relative" key={idx}>
               <ArrowIcon />
               <CardComments
                 className="childComment ml-12"
-                contents={"대댓글"}
-                profile={item.profile}
-                nickName={item.nickName}
-                createDate={item.createDate}
+                mogakosComment={item}
               />
             </div>
           )

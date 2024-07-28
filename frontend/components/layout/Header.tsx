@@ -1,12 +1,16 @@
 "use client"
 
+import { getItem, setItem } from "@/store/localStorage"
 import { useRouter } from "next/navigation"
 
 export default function Header() {
   const router = useRouter()
   const goPage = () => {
     // 로그인 유무 체크 후 마이페이지 또는 로그인 페이지로 이동
-    router.push("/login")
+    const accessToken = getItem({ key: "accessToken" })
+    //라스트 패스 저장
+    !accessToken ? setItem({ key: "lastPath", item: "/mypage" }) : undefined
+    accessToken ? router.push("/mypage") : router.push("/login")
   }
   return (
     <div className="flex flex-row justify-around pt-6">

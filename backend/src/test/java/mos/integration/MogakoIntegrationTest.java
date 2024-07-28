@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import mos.category.entity.Category;
 import mos.mogako.dto.CreateMogakoRequest;
 import mos.mogako.dto.MogakoResponse;
 import mos.mogako.dto.MogakosResponse;
@@ -25,20 +26,27 @@ import java.util.List;
 
 class MogakoIntegrationTest extends IntegrationTest {
 
+    private Category category1;
+    private Category category2;
     private Mogako mogako1;
     private Mogako mogako2;
 
     @BeforeEach
     void setUp() {
-        mogako1 = Mogako.createNewMogako("모각코1", "모각코 짧은 소개1",
+        category1 = Category.createCategory("카테고리 이름1");
+        category2 = Category.createCategory("카테고리 이름2");
+
+        mogako1 = Mogako.createNewMogako("모각코1", "모각코 짧은 소개1", category1,
                 LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
                 8, 2,
                 "모각코 상세설명");
-        mogako2 = Mogako.createNewMogako("모각코2", "모각코 짧은 소개2",
+        mogako2 = Mogako.createNewMogako("모각코2", "모각코 짧은 소개2", category1,
                 LocalDateTime.now().plusDays(2L), LocalDateTime.now().plusDays(3L),
                 10, 4,
                 "모각코 상세설명2");
 
+        entityManager.persist(category1);
+        entityManager.persist(category2);
         entityManager.persist(mogako1);
         entityManager.persist(mogako2);
 
@@ -49,7 +57,7 @@ class MogakoIntegrationTest extends IntegrationTest {
     @Test
     void 모각코_생성_테스트() throws Exception {
         // given
-        CreateMogakoRequest request = new CreateMogakoRequest(1L, "새 모각코", "모각코 짧은 소개",
+        CreateMogakoRequest request = new CreateMogakoRequest("새 모각코", "모각코 짧은 소개", category1.getId(),
                 LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
                 8, 2,
                 "모각코 상세설명");
@@ -92,7 +100,7 @@ class MogakoIntegrationTest extends IntegrationTest {
     @Test
     void 모각코_수정_테스트() throws Exception {
         // given
-        Long updatedCategoryId = 2L;
+        Long updatedCategoryId = category2.getId();
         String updatedName = "모각코 이름 수정";
         String updatedSummary = "모각코 짧은 소개 수정";
         LocalDateTime updatedStartDate = LocalDateTime.now().plusDays(2L);
