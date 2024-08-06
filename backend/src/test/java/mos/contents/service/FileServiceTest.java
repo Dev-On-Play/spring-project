@@ -17,7 +17,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.mock.web.MockMultipartFile;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -52,11 +56,19 @@ public class FileServiceTest {
         entityManager.clear();
     }
     @Test
-    void 파일_생성(){
+    void 파일_생성() throws IOException {
         //given
         CreateFileRequest request = new CreateFileRequest(mogako.getId(),"filename");
+        final String filepath = "C:\\Users\\soobi\\Pictures\\XL.jpg"; //로컬 파일 경로
+        FileInputStream fileInputStream = new FileInputStream(filepath);
+        MockMultipartFile image1 = new MockMultipartFile(
+                "images", //name
+                "XL.jpg", //originalFilename
+                "jpg",
+                fileInputStream
+        );
         //when
-        Long result = fileService.CreateFile(request,null);
+        Long result = fileService.CreateFile(request,image1);
 
         assertThat(result).isNotNull();
 
