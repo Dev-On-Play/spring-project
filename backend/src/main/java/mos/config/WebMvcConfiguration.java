@@ -23,14 +23,14 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         registry.addMapping("/api/**")
                 .allowedOriginPatterns("*")
                 .allowedMethods("*");
-//                .allowCredentials(true);  //이후 인증,인가 기능 추가 시 설정 예정
+//                .allowCredentials(true);  // todo : 이후 인증,인가 기능 추가 시 설정 예정
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor)
                 .addPathPatterns("/api/members/**");
-//                .excludePathPatterns("/api/**");
+//                .excludePathPatterns("/api/**"); // todo : 이후 인증,인가 기능 추가 시 설정 예정
     }
 
     @Override
