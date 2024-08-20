@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import mos.auth.exception.RefreshTokenExpiredException;
 import mos.common.entity.BaseTimeEntity;
 import mos.member.entity.Member;
 
@@ -42,7 +43,7 @@ public class RefreshToken extends BaseTimeEntity {
 
     public void validateExpired() {
         if (expireDateTime.isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException(); //todo : RefreshTokenExpiredException
+            throw new RefreshTokenExpiredException();
         }
     }
 

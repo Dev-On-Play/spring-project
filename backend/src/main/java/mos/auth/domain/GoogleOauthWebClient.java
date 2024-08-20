@@ -3,6 +3,7 @@ package mos.auth.domain;
 import lombok.RequiredArgsConstructor;
 import mos.auth.dto.OauthAccessTokenResponse;
 import mos.auth.dto.OauthUserProfileResponse;
+import mos.auth.exception.OauthServerException;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -34,7 +35,7 @@ public class GoogleOauthWebClient {
                 .bodyValue(createRequestAccessTokenBody(code))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(String.class)
-                        .map(IllegalArgumentException::new))    // todo : OauthServerException으로 예외처리 해주기
+                        .map(OauthServerException::new))
                 .bodyToMono(OauthAccessTokenResponse.class)
                 .block();
     }
@@ -56,7 +57,7 @@ public class GoogleOauthWebClient {
                 .headers(headers -> headers.setBearerAuth(accessToken))
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(String.class)
-                        .map(IllegalArgumentException::new))    // todo : OauthServerException으로 예외처리 해주기
+                        .map(OauthServerException::new))
                 .bodyToMono(OauthUserProfileResponse.class)
                 .block();
     }

@@ -2,6 +2,8 @@ package mos.auth.domain.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import mos.auth.exception.AccessTokenExpiredException;
+import mos.auth.exception.InvalidAccessTokenException;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -41,10 +43,9 @@ public class JwtTokenProvider {
                     .getBody()
                     .getSubject();
         } catch (ExpiredJwtException exception) {
-            throw new IllegalArgumentException(); // todo : AccessTokenExpiredException
+            throw new AccessTokenExpiredException();
         } catch (JwtException exception) {
-            throw new IllegalArgumentException(); // todo : InvalidAccessTokenException
+            throw new InvalidAccessTokenException();
         }
-
     }
 }

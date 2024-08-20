@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import mos.auth.domain.jwt.TokenValues;
 import mos.auth.dto.OauthLoginRequest;
 import mos.auth.dto.TokenResponse;
+import mos.auth.exception.RefreshTokenNotExistsInCookieException;
 import mos.auth.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,7 +51,7 @@ public class AuthController {
                 .filter(cookie -> cookie.getName().equals("refreshToken"))
                 .map(Cookie::getValue)
                 .findAny()
-                .orElseThrow(IllegalArgumentException::new);    // todo : RefreshTokenNotExistsException
+                .orElseThrow(RefreshTokenNotExistsInCookieException::new);
     }
 
     private Cookie setUpRefreshTokenCookie(TokenResponse tokenResponse) {
