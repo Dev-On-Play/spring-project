@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import mos.auth.exception.*;
 import mos.category.exception.CategoryNotFoundException;
+import mos.member.exception.MemberNotFoundException;
 import mos.mogako.exception.MogakoNotFoundException;
 import org.springframework.http.HttpStatus;
 
@@ -22,6 +23,7 @@ public class ExceptionMapper {
         setUpAuthExceptions();
         setUpCategoryExceptions();
         setUpMogakoExceptions();
+        setUpMemberExceptions();
     }
 
     private static void setUpAuthExceptions() {
@@ -49,6 +51,11 @@ public class ExceptionMapper {
     private static void setUpMogakoExceptions() {
         mapper.put(MogakoNotFoundException.class,
                 ExceptionSituation.of("존재하지 않는 모각코 id 입니다.", BAD_REQUEST));
+    }
+
+    private static void setUpMemberExceptions() {
+        mapper.put(MemberNotFoundException.class,
+                ExceptionSituation.of("존재하지 않는 멤버 id 입니다.", BAD_REQUEST));
     }
 
     public static ExceptionSituation getSituationOf(MosException e) {
