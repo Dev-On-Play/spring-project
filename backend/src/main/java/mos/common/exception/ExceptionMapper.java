@@ -5,6 +5,8 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import mos.auth.exception.*;
+import mos.category.exception.CategoryNotFoundException;
+import mos.mogako.exception.MogakoNotFoundException;
 import org.springframework.http.HttpStatus;
 
 import java.util.HashMap;
@@ -18,6 +20,8 @@ public class ExceptionMapper {
     static {
         // initialize Exceptions
         setUpAuthExceptions();
+        setUpCategoryExceptions();
+        setUpMogakoExceptions();
     }
 
     private static void setUpAuthExceptions() {
@@ -35,6 +39,16 @@ public class ExceptionMapper {
                 ExceptionSituation.of("Refresh Token 유효 기간이 만료되었습니다.", HttpStatus.UNAUTHORIZED));
         mapper.put(RefreshTokenNotExistsInCookieException.class,
                 ExceptionSituation.of("쿠키에 refresh token이 존재하지 않습니다.", BAD_REQUEST));
+    }
+
+    private static void setUpCategoryExceptions() {
+        mapper.put(CategoryNotFoundException.class,
+                ExceptionSituation.of("존재하지 않는 카테고리 id 입니다.", BAD_REQUEST));
+    }
+
+    private static void setUpMogakoExceptions() {
+        mapper.put(MogakoNotFoundException.class,
+                ExceptionSituation.of("존재하지 않는 모각코 id 입니다.", BAD_REQUEST));
     }
 
     public static ExceptionSituation getSituationOf(MosException e) {
