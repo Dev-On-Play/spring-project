@@ -12,6 +12,15 @@ public class ExceptionAdvice {
     Logger defaultLog = LoggerFactory.getLogger(ExceptionAdvice.class);
     Logger exceptionLog = LoggerFactory.getLogger("ExceptionLogger");
 
+    @ExceptionHandler(MosException.class)
+    public ResponseEntity<ExceptionResponse> handleMosException(MosException e) {
+        defaultLog.error(e.getMessage());
+        exceptionLog.error(e.getMessage(), e);
+        ExceptionSituation exceptionSituation = ExceptionMapper.getSituationOf(e);
+        return ResponseEntity.status(exceptionSituation.getStatusCode())
+                .body(new ExceptionResponse(exceptionSituation.getMessage()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Void> handleException(Exception e) {
         defaultLog.error(e.getMessage());
