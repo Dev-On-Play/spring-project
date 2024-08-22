@@ -1,5 +1,6 @@
 package mos.auth.domain;
 
+import mos.auth.exception.InvalidAuthorizationHeaderException;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -16,14 +17,14 @@ public class BearerAuthorizationParser {
         validateIsNonNull(authorizationHeader);
         String[] split = authorizationHeader.split(" ");
         if (split.length != HEADER_SIZE || !split[TOKEN_TYPE_LOCATION].equals(TOKEN_TYPE)) {
-            throw new IllegalArgumentException();   //todo : InvalidAuthorizationHeaderException
+            throw new InvalidAuthorizationHeaderException();
         }
         return split[ACCESS_TOKEN_LOCATION];
     }
 
     private void validateIsNonNull(String authorizationHeader) {
         if (Objects.isNull(authorizationHeader)) {
-            throw new IllegalArgumentException();   //todo : InvalidAuthorizationHeaderException
+            throw new InvalidAuthorizationHeaderException();
         }
     }
 }

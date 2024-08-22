@@ -7,6 +7,7 @@ import mos.auth.domain.jwt.TokenValues;
 import mos.auth.dto.OauthUserProfileResponse;
 import mos.auth.dto.TokenResponse;
 import mos.auth.entity.RefreshToken;
+import mos.auth.exception.InvalidRefreshTokenException;
 import mos.auth.repository.RefreshTokenRepository;
 import mos.member.entity.Member;
 import mos.member.repository.MemberRepository;
@@ -56,7 +57,7 @@ public class AuthTransactionalService {
     public TokenResponse republishAccessAndRefreshToken(String inputRefreshToken) {
         // jwt accessToken, refreshToken 재발급 후 반환
         RefreshToken refreshToken = refreshTokenRepository.findByUuid(UUID.fromString(inputRefreshToken))
-                .orElseThrow(IllegalArgumentException::new);    // todo : InvalidRefreshTokenException
+                .orElseThrow(InvalidRefreshTokenException::new);
         refreshToken.validateExpired();
         refreshToken.updateUuidAndExpireDateTime(tokenValues.refreshTokenExpireLength());
 
@@ -68,7 +69,7 @@ public class AuthTransactionalService {
 
     public void deleteRefreshToken(String inputRefreshToken) {
         RefreshToken refreshToken = refreshTokenRepository.findByUuid(UUID.fromString(inputRefreshToken))
-                .orElseThrow(IllegalArgumentException::new);// todo : InvalidLogoutRequestException
+                .orElseThrow(InvalidRefreshTokenException::new);
         refreshTokenRepository.delete(refreshToken);
     }
 }

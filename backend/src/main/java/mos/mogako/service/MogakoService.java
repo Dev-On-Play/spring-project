@@ -3,12 +3,14 @@ package mos.mogako.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import mos.category.entity.Category;
+import mos.category.exception.CategoryNotFoundException;
 import mos.category.repository.CategoryRepository;
 import mos.mogako.dto.CreateMogakoRequest;
 import mos.mogako.dto.MogakoResponse;
 import mos.mogako.dto.MogakosResponse;
 import mos.mogako.dto.UpdateMogakoRequest;
 import mos.mogako.entity.Mogako;
+import mos.mogako.exception.MogakoNotFoundException;
 import mos.mogako.repository.MogakoRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +26,7 @@ public class MogakoService {
 
     public Long createMogako(CreateMogakoRequest request) {
         Category category = categoryRepository.findById(request.categoryId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리 id 입니다."));
+                .orElseThrow(CategoryNotFoundException::new);
 
         Mogako createdMogako = Mogako.createNewMogako(request.name(), request.summary(), category,
                 request.startDate(), request.endDate(),
@@ -36,19 +38,17 @@ public class MogakoService {
     }
 
     public MogakoResponse findMogako(Long id) {
-        // todo : controllerAdvice 예외상황 처리 및 예외 정의
         Mogako mogako = mogakoRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 모각코 id 입니다."));
+                .orElseThrow(MogakoNotFoundException::new);
         return MogakoResponse.from(mogako);
     }
 
     public Long updateMogako(Long mogakoId, UpdateMogakoRequest request) {
-        // todo : controllerAdvice 예외상황 처리 및 예외 정의
         Mogako mogako = mogakoRepository.findById(mogakoId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 모각코 id 입니다."));
+                .orElseThrow(MogakoNotFoundException::new);
         // todo : 카테고리의 변경이 없으면 db 조회 안하는 방향으로 리팩토링
         Category category = categoryRepository.findById(request.categoryId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리 id 입니다."));
+                .orElseThrow(CategoryNotFoundException::new);
 
         mogako.update(request.name(), request.summary(), category,
                 request.startDate(), request.endDate(),
