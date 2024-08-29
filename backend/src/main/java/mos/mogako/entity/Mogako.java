@@ -6,7 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import mos.category.entity.Category;
 import mos.common.entity.BaseTimeEntity;
+import mos.hashtag.entity.Hashtag;
 import mos.hashtag.entity.MogakoHashtag;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -27,6 +30,7 @@ public class Mogako extends BaseTimeEntity {
     private Category category;
 
     @OneToMany(mappedBy = "mogako")
+    @Cascade({CascadeType.PERSIST, CascadeType.REMOVE})
     private final List<MogakoHashtag> hashtags = new ArrayList<>();
 
     private String name;
@@ -41,13 +45,14 @@ public class Mogako extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    private Mogako(String name, String summary, Category category,
+    private Mogako(String name, String summary, Category category, List<Hashtag> hashtags,
                    LocalDateTime startDate, LocalDateTime endDate,
                    Integer participantLimit, Integer participantCount, Integer minimumParticipantCount,
                    String detailContent, Status status) {
+        this.category = category;
+        addMogakoHashtags(hashtags);
         this.name = name;
         this.summary = summary;
-        this.category = category;
         this.startDate = startDate;
         this.endDate = endDate;
         this.participantLimit = participantLimit;
@@ -57,15 +62,21 @@ public class Mogako extends BaseTimeEntity {
         this.status = status;
     }
 
-    public static Mogako createNewMogako(String name, String summary, Category category,
+    public static Mogako createNewMogako(String name, String summary, Category category, List<Hashtag> hashtags,
                                          LocalDateTime startDate, LocalDateTime endDate,
                                          Integer participantLimit, Integer minimumParticipantCount,
                                          String detailContent) {
         // todo : 모각코장이 모각코를 만들면 자기 자신이 자동으로 참여처리되도록 구현 필요.
-        return new Mogako(name, summary, category,
+        return new Mogako(name, summary, category, hashtags,
                 startDate, endDate,
                 participantLimit, 1, minimumParticipantCount,
                 detailContent, Status.RECRUITING);
+    }
+
+    private void addMogakoHashtags(List<Hashtag> hashtags) {
+        hashtags.stream()
+                .map(hashtag -> MogakoHashtag.of(this, hashtag))
+                .forEach(this.hashtags::add);
     }
 
     public void update(String name, String summary, Category category,

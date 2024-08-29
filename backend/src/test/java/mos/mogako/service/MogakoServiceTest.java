@@ -6,6 +6,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import mos.category.entity.Category;
+import mos.hashtag.entity.Hashtag;
 import mos.mogako.dto.CreateMogakoRequest;
 import mos.mogako.dto.MogakoResponse;
 import mos.mogako.dto.MogakosResponse;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(ReplaceUnderscores.class)
@@ -35,6 +37,8 @@ class MogakoServiceTest {
 
     private Category category1;
     private Category category2;
+    private Hashtag hashtag1;
+    private Hashtag hashtag2;
     private Mogako mogako1;
 
     @BeforeEach
@@ -42,13 +46,20 @@ class MogakoServiceTest {
         category1 = Category.createCategory("카테고리 이름1");
         category2 = Category.createCategory("카테고리 이름2");
 
-        mogako1 = Mogako.createNewMogako("모각코 이름", "모각코 짧은 소개", category1,
+        hashtag1 = Hashtag.createNewHashtag("hashtag1");
+        hashtag2 = Hashtag.createNewHashtag("hashtag2");
+        List<Hashtag> hashtags = List.of(hashtag1, hashtag2);
+
+        mogako1 = Mogako.createNewMogako("모각코 이름", "모각코 짧은 소개",
+                category1, List.of(hashtag1, hashtag2),
                 LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
                 8, 2,
                 "모각코 상세설명");
 
         entityManager.persist(category1);
         entityManager.persist(category2);
+        entityManager.persist(hashtag1);
+        entityManager.persist(hashtag2);
         entityManager.persist(mogako1);
 
         entityManager.flush();
@@ -58,7 +69,8 @@ class MogakoServiceTest {
     @Test
     void 신규_모각코를_생성한다() {
         // given
-        CreateMogakoRequest request = new CreateMogakoRequest("모각코 이름", "모각코 짧은 소개", category1.getId(),
+        CreateMogakoRequest request = new CreateMogakoRequest("모각코 이름", "모각코 짧은 소개",
+                category1.getId(), List.of(hashtag1.getId(), hashtag2.getId()),
                 LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
                 8, 2,
                 "모각코 상세설명");
@@ -128,7 +140,8 @@ class MogakoServiceTest {
         int totalElements = 10;
 
         for (int i = 1; i < totalElements; i++) {
-            entityManager.persist(Mogako.createNewMogako("모각코 이름" + i, "모각코 짧은 소개", category1,
+            entityManager.persist(Mogako.createNewMogako("모각코 이름" + i, "모각코 짧은 소개",
+                    category1, List.of(hashtag1, hashtag2),
                     LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
                     8, 2,
                     "모각코 상세설명"));
