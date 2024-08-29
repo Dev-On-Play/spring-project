@@ -31,7 +31,7 @@ public class Mogako extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "mogako")
     @Cascade({CascadeType.PERSIST, CascadeType.REMOVE})
-    private final List<MogakoHashtag> hashtags = new ArrayList<>();
+    private final List<MogakoHashtag> mogakoHashtags = new ArrayList<>();
 
     private String name;
     private String summary;
@@ -76,7 +76,7 @@ public class Mogako extends BaseTimeEntity {
     private void addMogakoHashtags(List<Hashtag> hashtags) {
         hashtags.stream()
                 .map(hashtag -> MogakoHashtag.of(this, hashtag))
-                .forEach(this.hashtags::add);
+                .forEach(this.mogakoHashtags::add);
     }
 
     public void update(String name, String summary, Category category,
@@ -91,5 +91,11 @@ public class Mogako extends BaseTimeEntity {
         this.participantLimit = participantLimit;
         this.minimumParticipantCount = minimumParticipantCount;
         this.detailContent = detailContent;
+    }
+
+    public List<Hashtag> getHashtags() {
+        return mogakoHashtags.stream()
+                .map(MogakoHashtag::getHashtag)
+                .toList();
     }
 }
