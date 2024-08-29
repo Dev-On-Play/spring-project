@@ -3,8 +3,10 @@ package mos.hashtag.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import mos.hashtag.dto.CreateHashtagRequest;
+import mos.hashtag.dto.HashtagsResponse;
 import mos.hashtag.service.HashtagService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,5 +24,11 @@ public class HashtagController {
     public ResponseEntity<Void> createHashtag(@RequestBody CreateHashtagRequest request) {
         Long createdHashtagId = hashtagService.createHashtag(request);
         return ResponseEntity.created(URI.create("/api/hashtags/" + createdHashtagId)).build();
+    }
+
+    @Operation(summary = "전체 해시태그 목록 조회")
+    @GetMapping("/api/hashtags")
+    public ResponseEntity<HashtagsResponse> findAllHashtags() {
+        return ResponseEntity.ok(hashtagService.findAll());
     }
 }
