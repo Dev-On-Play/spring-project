@@ -39,6 +39,7 @@ class MogakoServiceTest {
     private Category category2;
     private Hashtag hashtag1;
     private Hashtag hashtag2;
+    private Hashtag hashtag3;
     private Mogako mogako1;
 
     @BeforeEach
@@ -48,6 +49,7 @@ class MogakoServiceTest {
 
         hashtag1 = Hashtag.createNewHashtag("hashtag1");
         hashtag2 = Hashtag.createNewHashtag("hashtag2");
+        hashtag3 = Hashtag.createNewHashtag("hashtag3");
         List<Hashtag> hashtags = List.of(hashtag1, hashtag2);
 
         mogako1 = Mogako.createNewMogako("모각코 이름", "모각코 짧은 소개",
@@ -60,6 +62,7 @@ class MogakoServiceTest {
         entityManager.persist(category2);
         entityManager.persist(hashtag1);
         entityManager.persist(hashtag2);
+        entityManager.persist(hashtag3);
         entityManager.persist(mogako1);
 
         entityManager.flush();
@@ -98,6 +101,7 @@ class MogakoServiceTest {
     void 단일_모각코의_정보를_수정할_수_있다() {
         // given
         Long updatedCategoryId = category2.getId();
+        List<Long> updatedHashtagIds = List.of(hashtag2.getId(), hashtag3.getId());
         String updatedName = "모각코 이름 수정";
         String updatedSummary = "모각코 짧은 소개 수정";
         LocalDateTime updatedStartDate = LocalDateTime.now().plusDays(2L);
@@ -106,8 +110,8 @@ class MogakoServiceTest {
         int updatedMinimumParticipantCount = 4;
         String updatedDetailContent = "모각코 상세설명 수정";
 
-        UpdateMogakoRequest request = new UpdateMogakoRequest(updatedCategoryId,
-                updatedName, updatedSummary,
+        UpdateMogakoRequest request = new UpdateMogakoRequest(updatedName, updatedSummary,
+                updatedCategoryId, updatedHashtagIds,
                 updatedStartDate, updatedEndDate,
                 updatedParticipantLimit, updatedMinimumParticipantCount,
                 updatedDetailContent);
@@ -119,9 +123,14 @@ class MogakoServiceTest {
         entityManager.flush();
         entityManager.clear();
         Mogako updatedMogako = entityManager.find(Mogako.class, updatedMogakoId);
+        List<Long> extractedHashtagIds = updatedMogako.getHashtags().stream()
+                .map(Hashtag::getId)
+                .toList();
 
         assertSoftly((softly) -> {
             softly.assertThat(updatedMogako.getCategory().getId()).isEqualTo(category2.getId());
+            softly.assertThat(extractedHashtagIds).doesNotContain(hashtag1.getId());
+            softly.assertThat(extractedHashtagIds).contains(hashtag2.getId(), hashtag3.getId());
             softly.assertThat(updatedMogako.getName()).isEqualTo(updatedName);
             softly.assertThat(updatedMogako.getSummary()).isEqualTo(updatedSummary);
             softly.assertThat(updatedMogako.getStartDate()).isEqualTo(updatedStartDate);

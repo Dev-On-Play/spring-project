@@ -1,6 +1,7 @@
 package mos.hashtag.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import mos.hashtag.dto.CreateHashtagRequest;
 import mos.hashtag.dto.HashtagsResponse;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 
+@Tag(name = "해시태그 관련 API")
 @RestController
 @RequiredArgsConstructor
 public class HashtagController {

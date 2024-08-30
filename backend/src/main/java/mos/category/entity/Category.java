@@ -26,4 +26,8 @@ public class Category {
     public static Category createCategory(String name) {
         return new Category(name);
     }
+
+    public boolean hasSameId(Long id) {
+        return this.id.equals(id);
+    }
 }

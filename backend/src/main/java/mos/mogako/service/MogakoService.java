@@ -50,13 +50,14 @@ public class MogakoService {
     }
 
     public Long updateMogako(Long mogakoId, UpdateMogakoRequest request) {
+        // todo : mogakoHashtag fetchJoin 해오기
         Mogako mogako = mogakoRepository.findById(mogakoId)
                 .orElseThrow(MogakoNotFoundException::new);
-        // todo : 카테고리의 변경이 없으면 db 조회 안하는 방향으로 리팩토링
-        Category category = categoryRepository.findById(request.categoryId())
+        Category updatedCategory = categoryRepository.findById(request.categoryId())
                 .orElseThrow(CategoryNotFoundException::new);
+        List<Hashtag> updatedHashtags = hashtagRepository.findAllById(request.hashtagIds());
 
-        mogako.update(request.name(), request.summary(), category,
+        mogako.update(request.name(), request.summary(), updatedCategory, updatedHashtags,
                 request.startDate(), request.endDate(),
                 request.participantLimit(), request.minimumParticipantCount(),
                 request.detailContent());

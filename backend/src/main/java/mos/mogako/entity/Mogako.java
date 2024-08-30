@@ -29,7 +29,7 @@ public class Mogako extends BaseTimeEntity {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "mogako")
+    @OneToMany(mappedBy = "mogako", orphanRemoval = true)
     @Cascade({CascadeType.PERSIST, CascadeType.REMOVE})
     private final List<MogakoHashtag> mogakoHashtags = new ArrayList<>();
 
@@ -79,18 +79,24 @@ public class Mogako extends BaseTimeEntity {
                 .forEach(this.mogakoHashtags::add);
     }
 
-    public void update(String name, String summary, Category category,
+    public void update(String name, String summary, Category category, List<Hashtag> hashtags,
                        LocalDateTime startDate, LocalDateTime endDate,
                        int participantLimit, int minimumParticipantCount, String detailContent) {
         // todo : 해시태그 엔티티 수정 이후 해시태그 연관관계 변경도 추가하기
         this.name = name;
         this.summary = summary;
         this.category = category;
+        updateMogakoHashtags(hashtags);
         this.startDate = startDate;
         this.endDate = endDate;
         this.participantLimit = participantLimit;
         this.minimumParticipantCount = minimumParticipantCount;
         this.detailContent = detailContent;
+    }
+
+    private void updateMogakoHashtags(List<Hashtag> updatedHashtags) {
+        this.mogakoHashtags.clear();
+        addMogakoHashtags(updatedHashtags);
     }
 
     public List<Hashtag> getHashtags() {

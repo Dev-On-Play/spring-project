@@ -37,7 +37,7 @@ public class MogakoController {
 
     @Operation(summary = "단일 모각코 정보 수정")
     @PutMapping("/api/mogakos/{mogakoId}")
-    public ResponseEntity<Void> modifyMogako(@PathVariable Long mogakoId, @RequestBody UpdateMogakoRequest request) {
+    public ResponseEntity<Void> updateMogako(@PathVariable Long mogakoId, @RequestBody UpdateMogakoRequest request) {
         Long updatedMogakoId = mogakoService.updateMogako(mogakoId, request);
         return ResponseEntity.noContent()
                 .header(HttpHeaders.LOCATION, "api/mogakos/" + updatedMogakoId)

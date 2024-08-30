@@ -31,6 +31,7 @@ class MogakoIntegrationTest extends IntegrationTest {
     private Category category2;
     private Hashtag hashtag1;
     private Hashtag hashtag2;
+    private Hashtag hashtag3;
     private Mogako mogako1;
     private Mogako mogako2;
 
@@ -41,6 +42,7 @@ class MogakoIntegrationTest extends IntegrationTest {
 
         hashtag1 = Hashtag.createNewHashtag("hashtag1");
         hashtag2 = Hashtag.createNewHashtag("hashtag2");
+        hashtag3 = Hashtag.createNewHashtag("hashtag3");
         List<Hashtag> hashtags = List.of(hashtag1, hashtag2);
 
         mogako1 = Mogako.createNewMogako("모각코1", "모각코 짧은 소개1", category1, hashtags,
@@ -56,6 +58,7 @@ class MogakoIntegrationTest extends IntegrationTest {
         entityManager.persist(category2);
         entityManager.persist(hashtag1);
         entityManager.persist(hashtag2);
+        entityManager.persist(hashtag3);
         entityManager.persist(mogako1);
         entityManager.persist(mogako2);
 
@@ -111,6 +114,7 @@ class MogakoIntegrationTest extends IntegrationTest {
     void 모각코_수정_테스트() throws Exception {
         // given
         Long updatedCategoryId = category2.getId();
+        List<Long> updatedHashtagIds = List.of(hashtag2.getId(), hashtag3.getId());
         String updatedName = "모각코 이름 수정";
         String updatedSummary = "모각코 짧은 소개 수정";
         LocalDateTime updatedStartDate = LocalDateTime.now().plusDays(2L);
@@ -119,8 +123,8 @@ class MogakoIntegrationTest extends IntegrationTest {
         int updatedMinimumParticipantCount = 4;
         String updatedDetailContent = "모각코 상세설명 수정";
 
-        UpdateMogakoRequest jsonRequest = new UpdateMogakoRequest(updatedCategoryId,
-                updatedName, updatedSummary,
+        UpdateMogakoRequest jsonRequest = new UpdateMogakoRequest(updatedName, updatedSummary,
+                updatedCategoryId, updatedHashtagIds,
                 updatedStartDate, updatedEndDate,
                 updatedParticipantLimit, updatedMinimumParticipantCount,
                 updatedDetailContent);
