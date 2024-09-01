@@ -4,11 +4,11 @@ import mos.category.entity.Category;
 
 import java.util.List;
 
-public record CategoriesResponse(List<String> categories) {
+public record CategoriesResponse(List<CategoryResponse> categories) {
 
     public static CategoriesResponse from(List<Category> categories) {
-        List<String> converted = categories.stream()
-                .map(Category::getName)
+        List<CategoryResponse> converted = categories.stream()
+                .map(CategoryResponse::from)
                 .toList();
         return new CategoriesResponse(converted);
     }

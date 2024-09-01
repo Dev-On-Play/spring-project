@@ -10,6 +10,7 @@ import mos.contents.dto.CommentResponse;
 import mos.contents.dto.CommentsResponse;
 import mos.contents.dto.CreateCommentRequest;
 import mos.contents.entity.Comment;
+import mos.hashtag.entity.Hashtag;
 import mos.member.entity.Member;
 import mos.mogako.entity.Mogako;
 import org.assertj.core.api.SoftAssertions;
@@ -38,7 +39,10 @@ class CommentIntegrationTest extends IntegrationTest {
     @BeforeEach
     void setup() {
         category = Category.createCategory("category");
-        mogako = Mogako.createNewMogako("mogakp", "summary", category,
+        Hashtag hashtag1 = Hashtag.createNewHashtag("hashtag1");
+        Hashtag hashtag2 = Hashtag.createNewHashtag("hashtag2");
+        List<Hashtag> hashtags = List.of(hashtag1, hashtag2);
+        mogako = Mogako.createNewMogako("mogakp", "summary", category, hashtags,
                 LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
                 8, 2,
                 "모각코 상세설명");
@@ -47,6 +51,8 @@ class CommentIntegrationTest extends IntegrationTest {
         comment2 = Comment.createNewComment(mogako, member, "신규 댓글 2");
 
         entityManager.persist(category);
+        entityManager.persist(hashtag1);
+        entityManager.persist(hashtag2);
         entityManager.persist(mogako);
         entityManager.persist(member);
         entityManager.persist(comment1);

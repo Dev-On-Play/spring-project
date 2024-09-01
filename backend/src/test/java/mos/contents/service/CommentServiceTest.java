@@ -9,6 +9,7 @@ import mos.category.entity.Category;
 import mos.contents.dto.CommentsResponse;
 import mos.contents.dto.CreateCommentRequest;
 import mos.contents.entity.Comment;
+import mos.hashtag.entity.Hashtag;
 import mos.member.entity.Member;
 import mos.mogako.entity.Mogako;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 //@Disabled("테스트 코드 미완성으로 인한 임시 비활성화")
 @SuppressWarnings("NonAsciiCharacters")
@@ -42,7 +44,10 @@ class CommentServiceTest {
     @BeforeEach
     void setup() {
         category = Category.createCategory("category1");
-        mogako = Mogako.createNewMogako("samplemogakp", "summary", category,
+        Hashtag hashtag1 = Hashtag.createNewHashtag("hashtag1");
+        Hashtag hashtag2 = Hashtag.createNewHashtag("hashtag2");
+        List<Hashtag> hashtags = List.of(hashtag1, hashtag2);
+        mogako = Mogako.createNewMogako("samplemogakp", "summary", category, hashtags,
                 LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
                 8, 2,
                 "detailcontent");

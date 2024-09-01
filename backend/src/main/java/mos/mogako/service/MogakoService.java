@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import mos.category.entity.Category;
 import mos.category.exception.CategoryNotFoundException;
 import mos.category.repository.CategoryRepository;
+import mos.hashtag.entity.Hashtag;
+import mos.hashtag.repository.HashtagRepository;
 import mos.mogako.dto.CreateMogakoRequest;
 import mos.mogako.dto.MogakoResponse;
 import mos.mogako.dto.MogakosResponse;
@@ -16,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -23,12 +27,14 @@ public class MogakoService {
 
     private final MogakoRepository mogakoRepository;
     private final CategoryRepository categoryRepository;
+    private final HashtagRepository hashtagRepository;
 
     public Long createMogako(CreateMogakoRequest request) {
         Category category = categoryRepository.findById(request.categoryId())
                 .orElseThrow(CategoryNotFoundException::new);
+        List<Hashtag> hashtags = hashtagRepository.findAllById(request.hashtagIds());
 
-        Mogako createdMogako = Mogako.createNewMogako(request.name(), request.summary(), category,
+        Mogako createdMogako = Mogako.createNewMogako(request.name(), request.summary(), category, hashtags,
                 request.startDate(), request.endDate(),
                 request.participantLimit(), request.minimumParticipantCount(),
                 request.detailContent());
@@ -44,13 +50,14 @@ public class MogakoService {
     }
 
     public Long updateMogako(Long mogakoId, UpdateMogakoRequest request) {
+        // todo : mogakoHashtag fetchJoin 해오기
         Mogako mogako = mogakoRepository.findById(mogakoId)
                 .orElseThrow(MogakoNotFoundException::new);
-        // todo : 카테고리의 변경이 없으면 db 조회 안하는 방향으로 리팩토링
-        Category category = categoryRepository.findById(request.categoryId())
+        Category updatedCategory = categoryRepository.findById(request.categoryId())
                 .orElseThrow(CategoryNotFoundException::new);
+        List<Hashtag> updatedHashtags = hashtagRepository.findAllById(request.hashtagIds());
 
-        mogako.update(request.name(), request.summary(), category,
+        mogako.update(request.name(), request.summary(), updatedCategory, updatedHashtags,
                 request.startDate(), request.endDate(),
                 request.participantLimit(), request.minimumParticipantCount(),
                 request.detailContent());

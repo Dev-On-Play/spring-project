@@ -1,14 +1,16 @@
 package mos.contents.service;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import mos.category.entity.Category;
-import mos.contents.dto.CommentsResponse;
 import mos.contents.dto.CreateFileRequest;
 import mos.contents.dto.FileResponse;
 import mos.contents.dto.FilesResponse;
-import mos.contents.entity.Comment;
 import mos.contents.entity.SavedFile;
+import mos.hashtag.entity.Hashtag;
 import mos.mogako.entity.Mogako;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -20,12 +22,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDateTime;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import java.util.List;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @Transactional
@@ -42,23 +41,29 @@ public class FileServiceTest {
 
 
     @BeforeEach
-    void setup(){
+    void setup() {
         category = Category.createCategory("category1");
-        mogako = Mogako.createNewMogako("samplemogakp","summary", category,
+        Hashtag hashtag1 = Hashtag.createNewHashtag("hashtag1");
+        Hashtag hashtag2 = Hashtag.createNewHashtag("hashtag2");
+        List<Hashtag> hashtags = List.of(hashtag1, hashtag2);
+        mogako = Mogako.createNewMogako("samplemogakp", "summary", category, hashtags,
                 LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
                 8, 2,
                 "detailcontent");
-        savedFile = SavedFile.createNewFile(mogako,"파일이름","fileurl");
+        savedFile = SavedFile.createNewFile(mogako, "파일이름", "fileurl");
         entityManager.persist(category);
+        entityManager.persist(hashtag1);
+        entityManager.persist(hashtag2);
         entityManager.persist(mogako);
         entityManager.persist(savedFile);
         entityManager.flush();
         entityManager.clear();
     }
+
     @Test
     void 파일_생성() throws IOException {
         //given
-        CreateFileRequest request = new CreateFileRequest(mogako.getId(),"filename");
+        CreateFileRequest request = new CreateFileRequest(mogako.getId(), "filename");
         final String filepath = "C:\\Users\\soobi\\Pictures\\XL.jpg"; //로컬 파일 경로
         FileInputStream fileInputStream = new FileInputStream(filepath);
         MockMultipartFile image1 = new MockMultipartFile(
@@ -68,27 +73,29 @@ public class FileServiceTest {
                 fileInputStream
         );
         //when
-        Long result = fileService.CreateFile(request,image1);
+        Long result = fileService.CreateFile(request, image1);
 
         assertThat(result).isNotNull();
 
     }
+
     @Test
-    void 파일_단건_조회() throws Exception{
+    void 파일_단건_조회() throws Exception {
         FileResponse response = fileService.findFile(savedFile.getId());
-        assertSoftly((softly)->{
+        assertSoftly((softly) -> {
             softly.assertThat(response.id()).isEqualTo(savedFile.getId());
         });
     }
+
     @Test
-    void 모각코_id로_파일목록조회() throws Exception{
+    void 모각코_id로_파일목록조회() throws Exception {
         int pageNumber = 1;
         int pageSize = 2;
         int totalElements = 10;
 
         for (int i = 1; i < totalElements; i++) {
             //TODO:member entity 완성 이후 service 수정하여 다시 테스트 예정
-            entityManager.persist(SavedFile.createNewFile(mogako,"filename"+i,"fileurl"));
+            entityManager.persist(SavedFile.createNewFile(mogako, "filename" + i, "fileurl"));
         }
         entityManager.flush();
         entityManager.clear();
@@ -96,7 +103,7 @@ public class FileServiceTest {
         PageRequest request = PageRequest.of(pageNumber, pageSize);
 
         //when
-        FilesResponse response = fileService.findFilesByMogakoId(mogako.getId(),request);
+        FilesResponse response = fileService.findFilesByMogakoId(mogako.getId(), request);
 
         //then
         assertSoftly((softly) -> {
