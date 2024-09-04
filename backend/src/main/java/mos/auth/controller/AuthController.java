@@ -28,9 +28,11 @@ public class AuthController {
 
     @Operation(summary = "소셜 로그인 요청")
     @PostMapping("/api/auth/login")
-    public ResponseEntity<TokenResponse> oauthLogin(@RequestBody OauthLoginRequest oauthLoginRequest) {
-        TokenResponse response = authService.oauthLogin(oauthLoginRequest);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<TokenResponse> oauthLogin(HttpServletResponse response, @RequestBody OauthLoginRequest oauthLoginRequest) {
+        TokenResponse tokenResponse = authService.oauthLogin(oauthLoginRequest);
+        Cookie cookie = setUpRefreshTokenCookie(tokenResponse);
+        response.addCookie(cookie);
+        return ResponseEntity.ok(tokenResponse);
     }
 
     @Operation(summary = "access 토큰, refresh 토큰 갱신")
@@ -58,7 +60,7 @@ public class AuthController {
         Cookie cookie = new Cookie("refreshToken", tokenResponse.refreshToken());
         cookie.setMaxAge((int) (tokenValues.refreshTokenExpireLength() / 1000L));
         cookie.setPath("/");
-//        cookie.setHttpOnly(true);     // todo : 서비스 https 적용 이후 활성화하기
+        cookie.setHttpOnly(true);
         cookie.setSecure(true);
         return cookie;
     }
