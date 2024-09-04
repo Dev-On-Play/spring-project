@@ -27,8 +27,8 @@ public class Member extends BaseTimeEntity {
     private String profile;
     private Double credibility;
 
-    public Member(String nickname, String email,
-                  String introduction, String profile, Double credibility) {
+    private Member(String nickname, String email,
+                   String introduction, String profile, Double credibility) {
         this.nickname = nickname;
         this.email = email;
         this.introduction = introduction;

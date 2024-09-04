@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import mos.category.entity.Category;
 import mos.hashtag.entity.Hashtag;
+import mos.integration.dto.MemberDto;
 import mos.mogako.dto.CreateMogakoRequest;
 import mos.mogako.dto.MogakoResponse;
 import mos.mogako.dto.MogakosResponse;
@@ -34,9 +35,10 @@ class MogakoIntegrationTest extends IntegrationTest {
     private Hashtag hashtag3;
     private Mogako mogako1;
     private Mogako mogako2;
+    private MemberDto member1;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         category1 = Category.createCategory("카테고리 이름1");
         category2 = Category.createCategory("카테고리 이름2");
 
@@ -53,6 +55,8 @@ class MogakoIntegrationTest extends IntegrationTest {
                 LocalDateTime.now().plusDays(2L), LocalDateTime.now().plusDays(3L),
                 10, 4,
                 "모각코 상세설명2");
+
+        member1 = createMember("member1");
 
         entityManager.persist(category1);
         entityManager.persist(category2);
@@ -82,7 +86,8 @@ class MogakoIntegrationTest extends IntegrationTest {
         // when
         this.mockMvc.perform(post("/api/mogakos/create")
                         .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, member1.createAuthorizationHeader()))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists(HttpHeaders.LOCATION));
 
@@ -96,7 +101,8 @@ class MogakoIntegrationTest extends IntegrationTest {
     void 모각코_조회_테스트() throws Exception {
         // given
         MvcResult result = this.mockMvc.perform(get("/api/mogakos/{mogakoId}", mogako1.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, member1.createAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -133,7 +139,8 @@ class MogakoIntegrationTest extends IntegrationTest {
         // then
         this.mockMvc.perform(put("/api/mogakos/{mogakoId}", mogako1.getId())
                         .content(request)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, member1.createAuthorizationHeader()))
                 .andExpect(status().isNoContent())
                 .andExpect(header().exists(HttpHeaders.LOCATION));
     }
@@ -151,7 +158,8 @@ class MogakoIntegrationTest extends IntegrationTest {
         // when
         MvcResult result = this.mockMvc.perform(get("/api/mogakos")
                         .queryParams(params)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, member1.createAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andReturn();
 

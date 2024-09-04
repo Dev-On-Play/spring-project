@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import mos.category.dto.CategoriesResponse;
 import mos.category.dto.CreateCategoryRequest;
 import mos.category.entity.Category;
+import mos.integration.dto.MemberDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -21,12 +22,15 @@ class CategoryIntegrationTest extends IntegrationTest {
 
     private Category category1;
     private Category category2;
+    private MemberDto member1;
     private Long initCategoryCount;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         category1 = Category.createCategory("카테고리 이름1");
         category2 = Category.createCategory("카테고리 이름2");
+
+        member1 = createMember("member1");
 
         entityManager.persist(category1);
         entityManager.persist(category2);
@@ -47,7 +51,8 @@ class CategoryIntegrationTest extends IntegrationTest {
         // when
         this.mockMvc.perform(post("/api/categories/create")
                         .content(jsonRequest)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, member1.createAuthorizationHeader()))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists(HttpHeaders.LOCATION));
 
@@ -60,7 +65,8 @@ class CategoryIntegrationTest extends IntegrationTest {
     @Test
     void 카테고리_전체_조회_테스트() throws Exception {
         // given
-        MvcResult result = this.mockMvc.perform(get("/api/categories"))
+        MvcResult result = this.mockMvc.perform(get("/api/categories")
+                        .header(HttpHeaders.AUTHORIZATION, member1.createAuthorizationHeader()))
                 .andExpect(status().isOk())
                 .andReturn();
 
