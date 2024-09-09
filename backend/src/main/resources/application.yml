@@ -16,4 +16,4 @@ springdoc:
   swagger-ui:
     path: /swagger/docs
 
-cors-allow-origin: https://https://k-mos.site
+cors-allow-origin: https://k-mos.site
