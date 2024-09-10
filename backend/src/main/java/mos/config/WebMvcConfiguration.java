@@ -3,6 +3,7 @@ package mos.config;
 import lombok.RequiredArgsConstructor;
 import mos.auth.domain.AuthArgumentResolver;
 import mos.auth.domain.AuthInterceptor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -18,19 +19,22 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     private final AuthInterceptor authInterceptor;
     private final AuthArgumentResolver authArgumentResolver;
 
+    @Value("${cors-allow-origin}")
+    String corsAllowOrigin;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOriginPatterns("*")
-                .allowedMethods("*");
-//                .allowCredentials(true);  // todo : 이후 인증,인가 기능 추가 시 설정 예정
+                .allowedOriginPatterns(corsAllowOrigin)
+                .allowedMethods("*")
+                .allowCredentials(true);
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor)
-                .addPathPatterns("/api/members/**");
-//                .excludePathPatterns("/api/**"); // todo : 이후 인증,인가 기능 추가 시 설정 예정
+                .addPathPatterns("/api/**")
+                .excludePathPatterns("/api/auth/**");
     }
 
     @Override
