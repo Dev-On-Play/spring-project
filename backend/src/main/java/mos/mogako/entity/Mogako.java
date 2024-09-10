@@ -8,6 +8,8 @@ import mos.category.entity.Category;
 import mos.common.entity.BaseTimeEntity;
 import mos.hashtag.entity.Hashtag;
 import mos.hashtag.entity.MogakoHashtag;
+import mos.mogako.exception.ParticipantLimitExceededException;
+import mos.participant.entity.Participant;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
@@ -24,6 +26,10 @@ public class Mogako extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToMany(mappedBy = "mogako", orphanRemoval = true)
+    @Cascade({CascadeType.PERSIST, CascadeType.REMOVE})
+    private final List<Participant> participants = new ArrayList<>();
+
     // todo : 카테고리 엔티티 작업 완료되면 엔티티 구조 변경 및 연관관계 추가 + 테스트 수정
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
@@ -38,7 +44,6 @@ public class Mogako extends BaseTimeEntity {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Integer participantLimit;
-    private Integer participantCount;
     private Integer minimumParticipantCount;
     private String detailContent;
 
@@ -47,7 +52,7 @@ public class Mogako extends BaseTimeEntity {
 
     private Mogako(String name, String summary, Category category, List<Hashtag> hashtags,
                    LocalDateTime startDate, LocalDateTime endDate,
-                   Integer participantLimit, Integer participantCount, Integer minimumParticipantCount,
+                   Integer participantLimit, Integer minimumParticipantCount,
                    String detailContent, Status status) {
         this.category = category;
         addMogakoHashtags(hashtags);
@@ -56,7 +61,6 @@ public class Mogako extends BaseTimeEntity {
         this.startDate = startDate;
         this.endDate = endDate;
         this.participantLimit = participantLimit;
-        this.participantCount = participantCount;
         this.minimumParticipantCount = minimumParticipantCount;
         this.detailContent = detailContent;
         this.status = status;
@@ -66,11 +70,8 @@ public class Mogako extends BaseTimeEntity {
                                          LocalDateTime startDate, LocalDateTime endDate,
                                          Integer participantLimit, Integer minimumParticipantCount,
                                          String detailContent) {
-        // todo : 모각코장이 모각코를 만들면 자기 자신이 자동으로 참여처리되도록 구현 필요.
-        return new Mogako(name, summary, category, hashtags,
-                startDate, endDate,
-                participantLimit, 1, minimumParticipantCount,
-                detailContent, Status.RECRUITING);
+        return new Mogako(name, summary, category, hashtags, startDate, endDate,
+                participantLimit, minimumParticipantCount, detailContent, Status.RECRUITING);
     }
 
     private void addMogakoHashtags(List<Hashtag> hashtags) {
@@ -103,5 +104,16 @@ public class Mogako extends BaseTimeEntity {
         return mogakoHashtags.stream()
                 .map(MogakoHashtag::getHashtag)
                 .toList();
+    }
+
+    public void participate(Participant participant) {
+        if (this.participants.size() >= this.participantLimit) {
+            throw new ParticipantLimitExceededException();
+        }
+        this.participants.add(participant);
+    }
+
+    public int getParticipantCount() {
+        return this.participants.size();
     }
 }

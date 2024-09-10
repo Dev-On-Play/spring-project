@@ -8,6 +8,7 @@ import mos.auth.exception.*;
 import mos.category.exception.CategoryNotFoundException;
 import mos.member.exception.MemberNotFoundException;
 import mos.mogako.exception.MogakoNotFoundException;
+import mos.mogako.exception.ParticipantLimitExceededException;
 import org.springframework.http.HttpStatus;
 
 import java.util.HashMap;
@@ -24,6 +25,7 @@ public class ExceptionMapper {
         setUpCategoryExceptions();
         setUpMogakoExceptions();
         setUpMemberExceptions();
+        setUpParticipantExceptions();
     }
 
     private static void setUpAuthExceptions() {
@@ -56,6 +58,11 @@ public class ExceptionMapper {
     private static void setUpMemberExceptions() {
         mapper.put(MemberNotFoundException.class,
                 ExceptionSituation.of("존재하지 않는 멤버 id 입니다.", BAD_REQUEST));
+    }
+
+    private static void setUpParticipantExceptions() {
+        mapper.put(ParticipantLimitExceededException.class,
+                ExceptionSituation.of("모각코 제한 인원을 초과했습니다.", BAD_REQUEST));
     }
 
     public static ExceptionSituation getSituationOf(MosException e) {
