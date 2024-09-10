@@ -7,6 +7,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import mos.category.entity.Category;
 import mos.hashtag.entity.Hashtag;
+import mos.member.entity.Member;
 import mos.mogako.dto.CreateMogakoRequest;
 import mos.mogako.dto.MogakoResponse;
 import mos.mogako.dto.MogakosResponse;
@@ -35,6 +36,7 @@ class MogakoServiceTest {
     @Autowired
     private EntityManager entityManager;
 
+    private Member member1;
     private Category category1;
     private Category category2;
     private Hashtag hashtag1;
@@ -44,6 +46,8 @@ class MogakoServiceTest {
 
     @BeforeEach
     void setUp() {
+        member1 = Member.createNewMember("member1", "email", "profile");
+
         category1 = Category.createCategory("카테고리 이름1");
         category2 = Category.createCategory("카테고리 이름2");
 
@@ -58,6 +62,7 @@ class MogakoServiceTest {
                 8, 2,
                 "모각코 상세설명");
 
+        entityManager.persist(member1);
         entityManager.persist(category1);
         entityManager.persist(category2);
         entityManager.persist(hashtag1);
@@ -79,7 +84,7 @@ class MogakoServiceTest {
                 "모각코 상세설명");
 
         // when
-        Long result = mogakoService.createMogako(request);
+        Long result = mogakoService.createMogako(member1.getId(), request);
 
         // then
         assertThat(result).isNotNull();

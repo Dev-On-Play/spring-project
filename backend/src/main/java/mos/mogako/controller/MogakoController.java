@@ -3,6 +3,7 @@ package mos.mogako.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import mos.auth.domain.Authenticated;
 import mos.mogako.dto.CreateMogakoRequest;
 import mos.mogako.dto.MogakoResponse;
 import mos.mogako.dto.MogakosResponse;
@@ -46,8 +47,8 @@ public class MogakoController {
 
     @Operation(summary = "신규 모각코 생성")
     @PostMapping("/api/mogakos/create")
-    public ResponseEntity<Void> createMogako(@RequestBody CreateMogakoRequest request) {
-        Long createdMogakoId = mogakoService.createMogako(request);
+    public ResponseEntity<Void> createMogako(@Authenticated Long authMemberId, @RequestBody CreateMogakoRequest request) {
+        Long createdMogakoId = mogakoService.createMogako(authMemberId, request);
         return ResponseEntity.created(URI.create("api/mogakos/" + createdMogakoId)).build();
     }
 }
