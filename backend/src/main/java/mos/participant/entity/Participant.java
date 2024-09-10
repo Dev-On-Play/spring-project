@@ -1,14 +1,12 @@
 package mos.participant.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import mos.common.entity.BaseTimeEntity;
 import mos.member.entity.Member;
 import mos.mogako.entity.Mogako;
 
 @Entity
-@Getter
 @RequiredArgsConstructor
 public class Participant extends BaseTimeEntity {
 
@@ -41,5 +39,21 @@ public class Participant extends BaseTimeEntity {
         }
         mogako.participate(participant);
         return participant;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getMemberId() {
+        return member.getId();
+    }
+
+    public boolean isHost() {
+        return this.isHost;
+    }
+
+    public boolean isAttended() {
+        return this.isAttended;
     }
 }
