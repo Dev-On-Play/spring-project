@@ -81,8 +81,8 @@ public class MogakoService {
         return mogako.getId();
     }
 
-    public MogakosResponse findAll(Pageable pageable) {
-        Page<Mogako> mogakos = mogakoRepository.findAll(pageable);
+    public MogakosResponse findAllWithFiltering(List<Long> categoryIds, List<Long> hashtagIds, Pageable pageable) {
+        Page<Mogako> mogakos = mogakoRepository.findAllWithFiltering(categoryIds, hashtagIds, pageable);
         return MogakosResponse.from(mogakos);
     }
 }
