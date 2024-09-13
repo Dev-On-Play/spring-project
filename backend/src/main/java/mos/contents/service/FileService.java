@@ -9,6 +9,8 @@ import mos.contents.repository.FileRepository;
 import mos.mogako.entity.Mogako;
 import mos.mogako.repository.MogakoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -79,5 +82,20 @@ public class FileService {
         }
 
         return storePath;
+    }
+
+    public Resource loadFileAsResource(String fileurl) {
+        try {
+            Path filePath = Paths.get(fileurl).toAbsolutePath().normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if(resource.exists()) {
+                return resource;
+            }else {
+                throw new RuntimeException();
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
