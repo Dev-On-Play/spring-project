@@ -3,7 +3,10 @@ package mos.mogako.repository;
 import static mos.hashtag.entity.QMogakoHashtag.mogakoHashtag;
 import static mos.mogako.entity.QMogako.mogako;
 
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +14,7 @@ import mos.mogako.entity.Mogako;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -40,6 +44,7 @@ public class MogakoRepositoryImpl implements MogakoRepositoryCustom {
                 .where(containsAnyCategory(categoryIds),
                         containsAllHashtag(hashtagIds)
                 )
+                .orderBy(getOrderSpecifier(pageable.getSort()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -72,5 +77,24 @@ public class MogakoRepositoryImpl implements MogakoRepositoryCustom {
                         .where(mogakoHashtag.hashtag.id.in(hashtagIds))
                         .groupBy(mogakoHashtag.mogako.id)
                         .having(mogakoHashtag.hashtag.id.countDistinct().eq((long) hashtagIds.size())));
+    }
+
+    private OrderSpecifier[] getOrderSpecifier(Sort sort) {
+        OrderSpecifier[] specifiers = sort.stream()
+                .map(this::getOrderSpecifier)
+                .toArray(OrderSpecifier[]::new);
+
+        if (specifiers.length == 0) {
+            PathBuilder pathBuilder = new PathBuilder(mogako.getType(), mogako.getMetadata());
+            specifiers = new OrderSpecifier[]{new OrderSpecifier(Order.ASC, pathBuilder.get("id"))};
+        }
+
+        return specifiers;
+    }
+
+    private OrderSpecifier getOrderSpecifier(Sort.Order order) {
+        Order direction = order.isAscending() ? Order.ASC : Order.DESC;
+        PathBuilder pathBuilder = new PathBuilder(mogako.getType(), mogako.getMetadata());
+        return new OrderSpecifier(direction, pathBuilder.get(order.getProperty()));
     }
 }
