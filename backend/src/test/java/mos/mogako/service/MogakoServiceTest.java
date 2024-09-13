@@ -10,6 +10,7 @@ import mos.hashtag.entity.Hashtag;
 import mos.member.entity.Member;
 import mos.mogako.dto.CreateMogakoRequest;
 import mos.mogako.dto.MogakoResponse;
+import mos.mogako.dto.MogakosResponse;
 import mos.mogako.dto.UpdateMogakoRequest;
 import mos.mogako.entity.Mogako;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -144,34 +146,34 @@ class MogakoServiceTest {
         });
     }
 
-//    @Test
-//    void 전체_모각코_목록을_페이지_조회한다() {
-//        // given
-//        int pageNumber = 1;
-//        int pageSize = 2;
-//        int totalElements = 10;
-//
-//        for (int i = 1; i < totalElements; i++) {
-//            entityManager.persist(Mogako.createNewMogako("모각코 이름" + i, "모각코 짧은 소개",
-//                    category1, List.of(hashtag1, hashtag2),
-//                    LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
-//                    8, 2,
-//                    "모각코 상세설명"));
-//        }
-//        entityManager.flush();
-//        entityManager.clear();
-//
-//        PageRequest request = PageRequest.of(pageNumber, pageSize);
-//
-//        // when
-//        MogakosResponse response = mogakoService.findAllWithFiltering(request);
-//
-//        // then
-//        assertSoftly((softly) -> {
-//            softly.assertThat(response.pageNumber()).isEqualTo(pageNumber);
-//            softly.assertThat(response.mogakos().size()).isEqualTo(pageSize);
-//            softly.assertThat(response.totalPages()).isEqualTo(totalElements / pageSize);
-//            softly.assertThat(response.totalElements()).isEqualTo(totalElements);
-//        });
-//    }
+    @Test
+    void 전체_모각코_목록을_페이지_조회한다() {
+        // given
+        int pageNumber = 1;
+        int pageSize = 2;
+        int totalElements = 10;
+
+        for (int i = 1; i < totalElements; i++) {
+            entityManager.persist(Mogako.createNewMogako("모각코 이름" + i, "모각코 짧은 소개",
+                    category1, List.of(hashtag1, hashtag2),
+                    LocalDateTime.now().plusDays(1L), LocalDateTime.now().plusDays(2L),
+                    8, 2,
+                    "모각코 상세설명"));
+        }
+        entityManager.flush();
+        entityManager.clear();
+
+        PageRequest request = PageRequest.of(pageNumber, pageSize);
+
+        // when
+        MogakosResponse response = mogakoService.findAllWithFiltering(null, null, request);
+
+        // then
+        assertSoftly((softly) -> {
+            softly.assertThat(response.pageNumber()).isEqualTo(pageNumber);
+            softly.assertThat(response.mogakos().size()).isEqualTo(pageSize);
+            softly.assertThat(response.totalPages()).isEqualTo(totalElements / pageSize);
+            softly.assertThat(response.totalElements()).isEqualTo(totalElements);
+        });
+    }
 }

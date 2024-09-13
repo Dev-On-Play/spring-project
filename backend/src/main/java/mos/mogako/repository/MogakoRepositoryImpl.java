@@ -55,14 +55,14 @@ public class MogakoRepositoryImpl implements MogakoRepositoryCustom {
         return new PageImpl<>(content, pageable, total);
     }
 
-    private static BooleanExpression containsAnyCategory(List<Long> categoryIds) {
+    private BooleanExpression containsAnyCategory(List<Long> categoryIds) {
         if (categoryIds == null) {
             return null;
         }
         return mogako.category.id.in(categoryIds);
     }
 
-    private static BooleanExpression containsAllHashtag(List<Long> hashtagIds) {
+    private BooleanExpression containsAllHashtag(List<Long> hashtagIds) {
         if (hashtagIds == null) {
             return null;
         }
