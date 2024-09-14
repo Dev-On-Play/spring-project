@@ -166,7 +166,7 @@ class MogakoServiceTest {
         PageRequest request = PageRequest.of(pageNumber, pageSize);
 
         // when
-        MogakosResponse response = mogakoService.findAll(request);
+        MogakosResponse response = mogakoService.findAllWithFiltering(null, null, request);
 
         // then
         assertSoftly((softly) -> {

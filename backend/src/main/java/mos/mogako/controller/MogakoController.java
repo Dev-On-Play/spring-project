@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @Tag(name = "모각코 관련 API")
 @RestController
@@ -25,8 +26,10 @@ public class MogakoController {
 
     @Operation(summary = "전체 모각코 목록 조회")
     @GetMapping("/api/mogakos")
-    public ResponseEntity<MogakosResponse> findMogakos(Pageable pageable) {
-        return ResponseEntity.ok(mogakoService.findAll(pageable));
+    public ResponseEntity<MogakosResponse> findMogakos(
+            @RequestParam(required = false, name = "category") List<Long> categoryIds,
+            @RequestParam(required = false, name = "hashtag") List<Long> hashtagIds, Pageable pageable) {
+        return ResponseEntity.ok(mogakoService.findAllWithFiltering(categoryIds, hashtagIds, pageable));
     }
 
     @Operation(summary = "단일 모각코 상세정보 조회")
