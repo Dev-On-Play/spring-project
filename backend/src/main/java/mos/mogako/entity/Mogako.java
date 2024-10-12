@@ -44,15 +44,19 @@ public class Mogako extends BaseTimeEntity {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private Integer participantLimit;
+    private Integer currentParticipantCount;
     private Integer minimumParticipantCount;
     private String detailContent;
 
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Version
+    private Long version;
+
     private Mogako(String name, String summary, Category category, List<Hashtag> hashtags,
                    LocalDateTime startDate, LocalDateTime endDate,
-                   Integer participantLimit, Integer minimumParticipantCount,
+                   Integer participantLimit, Integer currentParticipantCount, Integer minimumParticipantCount,
                    String detailContent, Status status) {
         this.category = category;
         addMogakoHashtags(hashtags);
@@ -61,6 +65,7 @@ public class Mogako extends BaseTimeEntity {
         this.startDate = startDate;
         this.endDate = endDate;
         this.participantLimit = participantLimit;
+        this.currentParticipantCount = currentParticipantCount;
         this.minimumParticipantCount = minimumParticipantCount;
         this.detailContent = detailContent;
         this.status = status;
@@ -71,7 +76,7 @@ public class Mogako extends BaseTimeEntity {
                                          Integer participantLimit, Integer minimumParticipantCount,
                                          String detailContent) {
         return new Mogako(name, summary, category, hashtags, startDate, endDate,
-                participantLimit, minimumParticipantCount, detailContent, Status.RECRUITING);
+                participantLimit, 0, minimumParticipantCount, detailContent, Status.RECRUITING);
     }
 
     private void addMogakoHashtags(List<Hashtag> hashtags) {
