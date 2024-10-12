@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import mos.auth.domain.Authenticated;
 import mos.participant.dto.ParticipantResponse;
 import mos.participant.service.ParticipantService;
+import mos.participant.service.ParticipantServiceFacade;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,10 +19,11 @@ import java.util.List;
 public class ParticipantController {
 
     private final ParticipantService participantService;
+    private final ParticipantServiceFacade participantServiceFacade;
 
     @PostMapping("/api/mogakos/{mogakoId}/participate")
     public ResponseEntity<Void> participate(@Authenticated Long authMemberId, @PathVariable Long mogakoId) {
-        Long participantId = participantService.participate(authMemberId, mogakoId);
+        Long participantId = participantServiceFacade.participate(authMemberId, mogakoId);
         return ResponseEntity.created(URI.create("/api/participants/" + participantId)).build();
     }
 

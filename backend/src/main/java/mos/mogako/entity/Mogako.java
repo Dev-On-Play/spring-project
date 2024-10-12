@@ -112,9 +112,10 @@ public class Mogako extends BaseTimeEntity {
     }
 
     public void participate(Participant participant) {
-        if (this.participants.size() >= this.participantLimit) {
+        if (currentParticipantCount >= this.participantLimit) {
             throw new ParticipantLimitExceededException();
         }
+        currentParticipantCount++;
         this.participants.add(participant);
     }
 
