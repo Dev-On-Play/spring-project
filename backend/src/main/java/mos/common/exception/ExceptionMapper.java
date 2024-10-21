@@ -6,6 +6,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import mos.auth.exception.*;
 import mos.category.exception.CategoryNotFoundException;
+import mos.contents.exception.CommentNotFoundException;
+import mos.contents.exception.FileNotFoundException;
 import mos.member.exception.MemberNotFoundException;
 import mos.mogako.exception.MogakoNotFoundException;
 import mos.mogako.exception.ParticipantLimitExceededException;
@@ -63,6 +65,11 @@ public class ExceptionMapper {
     private static void setUpParticipantExceptions() {
         mapper.put(ParticipantLimitExceededException.class,
                 ExceptionSituation.of("모각코 제한 인원을 초과했습니다.", BAD_REQUEST));
+    }
+
+    private static void setUpContentsException(){
+        mapper.put(CommentNotFoundException.class,ExceptionSituation.of("존재하지 않는 댓글 id입니다.", BAD_REQUEST));
+        mapper.put(FileNotFoundException.class,ExceptionSituation.of("존재하지 않는 파일 id 입니다.",BAD_REQUEST));
     }
 
     public static ExceptionSituation getSituationOf(MosException e) {
