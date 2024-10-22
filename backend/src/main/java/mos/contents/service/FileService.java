@@ -5,6 +5,7 @@ import mos.contents.dto.CreateFileRequest;
 import mos.contents.dto.FileResponse;
 import mos.contents.dto.FilesResponse;
 import mos.contents.entity.SavedFile;
+import mos.contents.exception.FileNotFoundException;
 import mos.contents.repository.FileRepository;
 import mos.mogako.entity.Mogako;
 import mos.mogako.repository.MogakoRepository;
@@ -37,7 +38,7 @@ public class FileService {
 
     public FileResponse findFile(Long id) {
         SavedFile savedFile = fileRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 File id 입니다."));
+                .orElseThrow(FileNotFoundException::new);
         return FileResponse.from(savedFile);
     }
 
@@ -92,7 +93,7 @@ public class FileService {
             if(resource.exists()) {
                 return resource;
             }else {
-                throw new RuntimeException();
+                throw new FileNotFoundException();
             }
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
